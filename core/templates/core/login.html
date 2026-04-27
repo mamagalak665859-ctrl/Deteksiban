@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Masuk" %} — DeteksiBan{% endblock %}
+
+{% block head_extras %}
+<link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/auth.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <div class="auth-brand-dot"></div>
+      <span class="auth-brand-name">DeteksiBan</span>
+    </div>
+
+    <h1 class="auth-title">{% trans "Selamat Datang" %}</h1>
+    <p class="auth-sub">{% trans "Masuk ke akun Anda untuk mulai menganalisis ban." %}</p>
+
+    {% if messages %}
+    <ul class="msg-list">
+      {% for m in messages %}
+      <li class="{{ m.tags }}">{{ m }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.username.id_for_label }}">{% trans "Username" %}</label>
+        <input
+          type="text" name="username"
+          id="{{ form.username.id_for_label }}"
+          class="form-control{% if form.username.errors %} is-error{% endif %}"
+          placeholder="{% trans 'Username Anda' %}"
+          value="{{ form.username.value|default:'' }}"
+          autocomplete="username" autofocus>
+        {% for e in form.username.errors %}
+          <div class="form-error">⚠ {{ e }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.password.id_for_label }}">{% trans "Kata Sandi" %}</label>
+        <input
+          type="password" name="password"
+          id="{{ form.password.id_for_label }}"
+          class="form-control{% if form.password.errors %} is-error{% endif %}"
+          placeholder="••••••••"
+          autocomplete="current-password">
+        {% for e in form.password.errors %}
+          <div class="form-error">⚠ {{ e }}</div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+          {% for e in form.non_field_errors %}
+            <div class="form-error" style="margin-top:8px">⚠ {{ e }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn-auth" id="loginBtn">{% trans "Masuk" %}</button>
+    </form>
+
+    <p class="auth-switch">
+      {% trans "Belum punya akun?" %}
+      <a href="{% url 'register' %}">{% trans "Daftar sekarang" %}</a>
+    </p>
+
+    <p class="auth-switch" style="margin-top:8px;">
+      <a href="{% url 'password_reset' %}">{% trans "Lupa kata sandi?" %}</a>
+    </p>
+
+    <!-- Lang switcher -->
+    <div style="text-align:center;margin-top:18px;display:flex;gap:8px;justify-content:center">
+      <button onclick="switchLang('id')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;color:var(--muted);font-size:12px;cursor:pointer">🇮🇩 ID</button>
+      <button onclick="switchLang('en')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;color:var(--muted);font-size:12px;cursor:pointer">🇬🇧 EN</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const btn = document.getElementById('loginBtn');
+    const stateMgr = new ButtonStateManager(btn);
+    stateMgr.setLoading('{% trans "Sedang masuk..." %}');
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{
+  "name": "DeteksiBan AI",
+  "short_name": "DeteksiBan",
+  "description": "Aplikasi deteksi kondisi ban otomatis dengan kamera dan model ML.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1e",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='540' height='720' viewBox='0 0 540 720'%3E%3Crect width='540' height='720' fill='%230a0f1e'/%3E%3Ctext x='270' y='360' text-anchor='middle' dominant-baseline='middle' fill='%23fff' font-size='40' font-family='sans-serif'%3EDeteksiBan%3C/text%3E%3C/svg%3E",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%233b82f6' rx='6'/%3E%3Cpath d='M7 17h10M8 13h2M14 13h2M12 7v10' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%233b82f6' rx='6'/%3E%3Cpath d='M7 17h10M8 13h2M14 13h2M12 7v10' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%233b82f6' rx='6'/%3E%3Cpath d='M7 17h10M8 13h2M14 13h2M12 7v10' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%233b82f6' rx='6'/%3E%3Cpath d='M7 17h10M8 13h2M14 13h2M12 7v10' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard Kamera",
+      "short_name": "Kamera",
+      "description": "Buka dashboard kamera untuk analisis",
+      "url": "/dashboard/",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%233b82f6' rx='6'/%3E%3Cpath d='M7 17h10M8 13h2M14 13h2M12 7v10' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Daftar" %} — DeteksiBan{% endblock %}
+
+{% block head_extras %}
+<link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/auth.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <div class="auth-brand-dot"></div>
+      <span class="auth-brand-name">DeteksiBan</span>
+    </div>
+
+    <h1 class="auth-title">{% trans "Buat Akun" %}</h1>
+    <p class="auth-sub">{% trans "Daftar gratis dan mulai analisis ban hari ini." %}</p>
+
+    {% if messages %}
+    <ul class="msg-list">
+      {% for m in messages %}
+      <li class="{{ m.tags }}">{{ m }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">{% trans "Nama Depan" %}</label>
+          <input type="text" name="first_name" class="form-control"
+                 placeholder="{% trans 'Budi' %}"
+                 value="{{ form.first_name.value|default:'' }}"
+                 autocomplete="given-name">
+          {% for e in form.first_name.errors %}<div class="form-error">⚠ {{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Nama Belakang" %}</label>
+          <input type="text" name="last_name" class="form-control"
+                 placeholder="{% trans 'Santoso' %}"
+                 value="{{ form.last_name.value|default:'' }}"
+                 autocomplete="family-name">
+          {% for e in form.last_name.errors %}<div class="form-error">⚠ {{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">{% trans "Email" %}</label>
+        <input type="email" name="email" class="form-control"
+               placeholder="budi@email.com"
+               value="{{ form.email.value|default:'' }}"
+               autocomplete="email">
+        {% for e in form.email.errors %}<div class="form-error">⚠ {{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">{% trans "Username" %}</label>
+        <input type="text" name="username" class="form-control"
+               placeholder="{% trans 'Username unik' %}"
+               value="{{ form.username.value|default:'' }}"
+               autocomplete="username">
+        {% for e in form.username.errors %}<div class="form-error">⚠ {{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">{% trans "Kata Sandi" %}</label>
+          <input type="password" name="password1" class="form-control"
+                 placeholder="••••••••" autocomplete="new-password">
+          {% for e in form.password1.errors %}<div class="form-error">⚠ {{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Konfirmasi" %}</label>
+          <input type="password" name="password2" class="form-control"
+                 placeholder="••••••••" autocomplete="new-password">
+          {% for e in form.password2.errors %}<div class="form-error">⚠ {{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      {% if form.non_field_errors %}
+        {% for e in form.non_field_errors %}
+          <div class="form-error" style="margin-bottom:12px">⚠ {{ e }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <button type="submit" class="btn-auth" id="registerBtn">{% trans "Buat Akun" %}</button>
+    </form>
+
+    <p class="auth-switch">
+      {% trans "Sudah punya akun?" %}
+      <a href="{% url 'login' %}">{% trans "Masuk di sini" %}</a>
+    </p>
+
+    <div style="text-align:center;margin-top:18px;display:flex;gap:8px;justify-content:center">
+      <button onclick="switchLang('id')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;color:var(--muted);font-size:12px;cursor:pointer">🇮🇩 ID</button>
+      <button onclick="switchLang('en')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;color:var(--muted);font-size:12px;cursor:pointer">🇬🇧 EN</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const btn = document.getElementById('registerBtn');
+    const stateMgr = new ButtonStateManager(btn);
+    stateMgr.setLoading('{% trans "Sedang membuat akun..." %}');
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "APK Tidak Tersedia" %} — DeteksiBan AI{% endblock %}
+
+{% block body %}
+<main class="main" id="mn">
+  <div class="content-block" style="max-width:720px;margin:72px auto;text-align:center;padding:24px;">
+    <h1 style="font-size:2rem;margin-bottom:16px;">{% trans "Aplikasi belum tersedia" %}</h1>
+    <p style="font-size:1rem;line-height:1.7;margin-bottom:24px;">{% trans "File APK saat ini belum ditemukan di server. Silakan tambahkan file ke static/downloads/tirescan.apk atau hubungi administrator." %}</p>
+    <a href="{% url 'dashboard' %}" class="btn" style="padding:12px 20px;font-weight:600;">{% trans "Kembali ke Dashboard" %}</a>
+  </div>
+</main>
+{% endblock %}

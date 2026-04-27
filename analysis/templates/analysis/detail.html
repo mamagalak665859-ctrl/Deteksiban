@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Detail Analisis" %} — DeteksiBan{% endblock %}
+
+{% block head_extras %}
+<link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'analysis/css/dashboard.css' %}">
+<style>
+  .detail-grid { display:grid; grid-template-columns:300px 1fr; gap:16px; align-items:start; }
+  .list-panel {
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;
+  }
+  .list-head { padding:14px 16px; border-bottom:1px solid var(--border); font-size:13px; font-weight:700; }
+  .list-item {
+    display:flex; align-items:center; gap:12px; padding:10px 14px;
+    border-bottom:1px solid var(--border); cursor:pointer; text-decoration:none;
+    transition:background var(--trans); color:var(--text);
+  }
+  .list-item:last-child { border-bottom:none; }
+  .list-item:hover { background:rgba(255,255,255,.04); }
+  .list-item.active { background:rgba(59,130,246,.1); border-left:3px solid var(--acc); }
+  .list-thumb { width:44px; height:33px; border-radius:6px; object-fit:cover; flex-shrink:0; background:var(--bg); }
+  .list-meta { flex:1; min-width:0; }
+  .list-cond { font-size:12px; font-weight:700; }
+  .list-date { font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .detail-panel { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+  .detail-head  { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+  .detail-body  { padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .detail-img   { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; background:var(--bg); }
+  .detail-row   { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .detail-field { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:10px; padding:14px; }
+  .df-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:6px; }
+  .df-value { font-size:15px; font-weight:700; }
+  .json-block { background:rgba(0,0,0,.3); border:1px solid var(--border); border-radius:10px; padding:14px; font-family:monospace; font-size:12px; color:#93c5fd; overflow-x:auto; white-space:pre; line-height:1.55; max-height:200px; overflow-y:auto; }
+  .no-select { text-align:center; padding:60px 20px; color:var(--muted); }
+  .no-select svg { width:44px; height:44px; stroke:currentColor; fill:none; stroke-width:1.5; opacity:.3; margin:0 auto 12px; display:block; }
+
+  @media(max-width:768px) {
+    .detail-grid { grid-template-columns:1fr; }
+    .detail-row  { grid-template-columns:1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+{% csrf_token %}
+<div class="shell">
+  <div class="ov" id="ov" onclick="closeSB()"></div>
+
+  <aside class="sb" id="sb">
+    <div class="sb-top"><div class="brand"><span class="bdot"></span>DeteksiBan</div></div>
+    <div class="sb-prof">
+      <div class="av-w">
+        <div class="av-c">
+          <span>{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+          <img alt="av"{% if user.profile.avatar %} src="{{ user.profile.avatar.url }}" style="display:block"{% endif %}>
+        </div>
+        <div class="av-dot"></div>
+      </div>
+      <div class="sb-name">{{ user.get_full_name|default:user.username }}</div>
+      <div class="sb-role">{% trans "Pengguna Aktif" %}</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="ng">{% trans "Menu Utama" %}</div>
+      <a href="{% url 'dashboard' %}" class="ni">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        {% trans "Dashboard Kamera" %}
+      </a>
+      <a href="{% url 'history' %}" class="ni">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        {% trans "Riwayat Analisis" %}
+      </a>
+      <a href="{% url 'detail' %}" class="ni act">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {% trans "Detail Analisis" %}
+      </a>
+      <div class="ng">{% trans "Akun" %}</div>
+      <a href="{% url 'delete_account' %}" class="ni ni-d">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        {% trans "Hapus Akun" %}
+      </a>
+      <a href="{% url 'logout' %}" class="ni">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        {% trans "Keluar" %}
+      </a>
+    </nav>
+    <div class="sb-ft">
+      <div class="llbl">{% trans "Bahasa" %}</div>
+      <div class="lpills">
+        {% get_current_language as current_lang %}
+        <button type="button" class="lp {% if current_lang == 'id' %}act{% endif %}" onclick="switchLang('id')">🇮🇩 Indonesia</button>
+        <button type="button" class="lp {% if current_lang == 'en' %}act{% endif %}" onclick="switchLang('en')">🇬🇧 English</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main" id="mn">
+    <div class="topbar">
+      <div class="pg-info">
+        <div class="pg-t">{% trans "Detail Analisis" %}</div>
+        <div class="pg-s">{% trans "Informasi lengkap setiap analisis ban" %}</div>
+      </div>
+      <div class="tb-right">
+        <div class="chips">
+          {% get_current_language as current_lang %}
+          <button type="button" class="chip {% if current_lang == 'id' %}act{% endif %}" onclick="switchLang('id')">ID</button>
+          <button type="button" class="chip {% if current_lang == 'en' %}act{% endif %}" onclick="switchLang('en')">EN</button>
+        </div>
+        <button class="tog" onclick="togSB()">
+          <div class="tog-bar"></div>
+          <div class="tog-bar" style="width:10px;margin-right:4px"></div>
+          <div class="tog-bar"></div>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="detail-grid">
+
+        <!-- List panel -->
+        <div class="list-panel">
+          <div class="list-head">{% trans "Pilih Analisis" %} <span style="color:var(--muted);font-weight:400">({{ analyses|length }})</span></div>
+          {% if analyses %}
+            {% for a in analyses %}
+            <a href="{% url 'detail' %}?id={{ a.pk }}"
+               class="list-item {% if selected and selected.pk == a.pk %}active{% endif %}">
+              {% if a.image %}
+              <img class="list-thumb" src="{{ a.image.url }}" alt="">
+              {% else %}
+              <div class="list-thumb" style="display:grid;place-items:center;color:var(--muted);font-size:10px">?</div>
+              {% endif %}
+              <div class="list-meta">
+                <div class="list-cond">
+                  <span class="cond-badge cond-{{ a.condition }}" style="padding:2px 7px;font-size:10px">{{ a.get_condition_display }}</span>
+                </div>
+                <div class="list-date">{{ a.created_at|date:"d M Y H:i" }}</div>
+              </div>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div style="padding:24px;text-align:center;color:var(--muted);font-size:13px">
+              {% trans "Belum ada analisis" %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Detail panel -->
+        <div class="detail-panel">
+          {% if selected %}
+          <div class="detail-head">
+            <span class="cond-badge cond-{{ selected.condition }}" style="font-size:12px">
+              {{ selected.get_condition_display }}
+            </span>
+            <span style="font-size:13px;font-weight:700">{{ selected.label|default:"—" }}</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--muted)">
+              {{ selected.created_at|date:"d M Y, H:i" }}
+            </span>
+          </div>
+          <div class="detail-body">
+            {% if selected.image %}
+            <img class="detail-img" src="{{ selected.image.url }}" alt="analysis photo">
+            {% endif %}
+
+            <div class="detail-row">
+              <div class="detail-field">
+                <div class="df-label">{% trans "Kondisi" %}</div>
+                <div class="df-value" style="color:{{ selected.get_condition_display_color }}">
+                  {{ selected.get_condition_display }}
+                </div>
+              </div>
+              <div class="detail-field">
+                <div class="df-label">{% trans "Kepercayaan" %}</div>
+                <div class="df-value">{{ selected.confidence_percent }}%</div>
+              </div>
+              <div class="detail-field">
+                <div class="df-label">{% trans "Tahun Ban" %}</div>
+                <div class="df-value">{{ selected.tire_year|default:"—" }}</div>
+              </div>
+              <div class="detail-field">
+                <div class="df-label">{% trans "Mode Kamera" %}</div>
+                <div class="df-value">{{ selected.get_camera_mode_display }}</div>
+              </div>
+            </div>
+
+            {% if selected.raw_result %}
+            <div>
+              <div class="df-label" style="margin-bottom:8px">{% trans "Data Mentah Model" %}</div>
+              <div class="json-block">{{ selected.raw_result|safe }}</div>
+            </div>
+            {% endif %}
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              {% if selected.image %}
+              <button class="btn btn-ok" onclick="downloadImage('{{ selected.image.url }}', this)">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                {% trans "Unduh Foto" %}
+              </button>
+              {% endif %}
+              <a href="{% url 'history' %}" class="btn btn-ghost">
+                {% trans "Ke Riwayat" %}
+              </a>
+            </div>
+          </div>
+
+          {% else %}
+          <div class="no-select">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p>{% trans "Pilih analisis dari daftar di sebelah kiri untuk melihat detailnya." %}</p>
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const CSRF_TOKEN  = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || "";
+const SET_LANG_URL= "{% url 'set_language' %}";
+
+function downloadImage(url, btn) {
+  const stateMgr = new ButtonStateManager(btn);
+  stateMgr.setLoading('...');
+  
+  // Create a temporary link and trigger download
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = url.split('/').pop() || 'image.jpg';
+  document.body.appendChild(link);
+  
+  try {
+    link.click();
+    stateMgr.setSuccess('✓', 1200);
+    showToast('Gambar sedang diunduh', 'success');
+  } catch (err) {
+    stateMgr.setError('✗', 1500);
+    showToast('Gagal mengunduh gambar', 'error');
+  } finally {
+    document.body.removeChild(link);
+  }
+}
+
+function togSB() {
+  document.getElementById('sb').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('open');
+}
+function closeSB() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+function doSwitchLang(lang) {
+  fetch(SET_LANG_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF_TOKEN },
+    body: `language=${lang}`
+  }).then(() => location.reload());
+}
+</script>
+{% endblock %}

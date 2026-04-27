@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Date: Mon, 27 Apr 2026 04:39:09 GMT
+Server: WSGIServer/0.2 CPython/3.14.2
+Content-Type: application/json
+X-Frame-Options: DENY
+Content-Length: 30
+Vary: Accept-Language, Cookie
+Content-Language: en
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+Set-Cookie:  django_language=en; Path=/
+

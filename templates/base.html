@@ -1,0 +1,151 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{% get_current_language as current_lang %}{{ current_lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0f1e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <form id="csrf-form" style="display:none">{% csrf_token %}</form>
+  <link rel="manifest" href="/manifest.json">
+  <title>{% block title %}DeteksiBan AI{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+  {% block head_extras %}{% endblock %}
+</head>
+<body>
+  {% block body %}{% endblock %}
+
+  <div id="toast-container"></div>
+
+  <script>
+    // ── Button State Manager ─────────────────────────────────────
+    class ButtonStateManager {
+      constructor(button) {
+        this.button = button;
+        this.originalHTML = button.innerHTML;
+        this.originalDisabled = button.disabled;
+      }
+      setLoading(loadingText = '') {
+        this.button.disabled = true;
+        this.button.classList.add('btn-loading');
+        if (loadingText) this.button.innerHTML = `<span class="loader"></span> ${loadingText}`;
+      }
+      setSuccess(successText = '', duration = 2000) {
+        this.button.classList.add('btn-success');
+        if (successText) this.button.innerHTML = `<span class="check-icon">✓</span> ${successText}`;
+        setTimeout(() => this.reset(), duration);
+      }
+      setError(errorText = '', duration = 2000) {
+        this.button.classList.add('btn-error');
+        if (errorText) this.button.innerHTML = `<span class="error-icon">✕</span> ${errorText}`;
+        setTimeout(() => this.reset(), duration);
+      }
+      reset() {
+        this.button.disabled = this.originalDisabled;
+        this.button.classList.remove('btn-loading', 'btn-success', 'btn-error');
+        this.button.innerHTML = this.originalHTML;
+      }
+    }
+
+    // ── Global toast ─────────────────────────────────────────────
+    function showToast(msg, type='info') {
+      const c = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = `toast toast-${type}`;
+      t.textContent = msg;
+      c.appendChild(t);
+      requestAnimationFrame(() => t.classList.add('show'));
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3500);
+    }
+
+    // ── Global text constants ───────────────────────────────────────
+    window.TXT = window.TXT || {
+      on: 'Menyala',
+      off: 'Matikan',
+      retry: 'Coba Lagi',
+      analyses: 'analisis',
+      front: 'Depan',
+      rear: 'Belakang',
+      camErr: 'Gagal akses kamera',
+      captured: 'Foto diambil!',
+      analyzing: 'Menganalisis...',
+      done: 'Analisis selesai',
+      noImg: 'Tidak ada gambar untuk diunduh',
+      cleared: 'Riwayat dihapus',
+      deleted: 'Analisis dihapus',
+      reportOk: 'Pengaduan terkirim!',
+      typeMsg: 'Ketik pesan terlebih dahulu',
+      enterYear: 'Masukkan tahun ban untuk melihat kelayakan',
+      replaceNow: 'Ban harus diganti',
+      stillGood: 'Ban masih layak',
+      years: 'tahun',
+      notTireMsg: 'Gambar yang diupload bukan ban. Silakan ambil foto ban yang jelas.',
+      loading: 'Menyiapkan...',
+      installed: 'Dipasang',
+      appDownloading: 'Aplikasi akan diunduh...',
+      cancelled: 'Dibatalkan',
+      installCancelled: 'Pemasangan dibatalkan',
+      failed: 'Gagal',
+      installFailed: 'Gagal menampilkan prompt install',
+    };
+
+    // ── Language switcher ─────────────────────────────────────────
+    function switchLang(lang) {
+      // Get CSRF token from cookie (Django standard)
+      const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] || '';
+      if (!csrfToken) {
+        console.error('CSRF token not found in cookies');
+        return;
+      }
+      
+      // Add loading state to buttons
+      const buttons = document.querySelectorAll('button[onclick*="switchLang"]');
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+      });
+      
+      fetch('/api/language/', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded', 'X-CSRFToken': csrfToken},
+        body: `language=${lang}`
+      }).then(response => {
+        if (response.ok) {
+          console.log('Language switched to:', lang);
+          // Wait longer for cookie to be set, then reload
+          setTimeout(() => location.reload(), 200);
+        } else {
+          console.error('Language switch failed:', response.status);
+          showToast('Gagal mengganti bahasa / Failed to switch language', 'error');
+          buttons.forEach(btn => {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+          });
+        }
+      }).catch(error => {
+        console.error('Language switch error:', error);
+        showToast('Kesalahan jaringan / Network error', 'error');
+        buttons.forEach(btn => {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        });
+      });
+    }
+    window.switchLang = switchLang;
+    window.doSwitchLang = switchLang;
+  </script>
+  {% block scripts %}{% endblock %}
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+          .catch(err => console.warn('SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

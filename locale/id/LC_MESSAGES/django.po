@@ -1,0 +1,20 @@
+# Indonesian translations for DeteksiBan AI
+# Copyright (C) 2025
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: DeteksiBan AI 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 00:00+0000\n"
+"PO-Revision-Date: 2025-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Indonesian\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+# Indonesian adalah bahasa sumber — msgstr dikosongkan supaya Django
+# menggunakan msgid (string asli dalam template) secara langsung.
+

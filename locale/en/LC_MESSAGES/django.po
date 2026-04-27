@@ -1,0 +1,980 @@
+# English translations for DeteksiBan AI
+# Copyright (C) 2025
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: DeteksiBan AI 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-27 12:15+0700\n"
+"PO-Revision-Date: 2025-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: analysis/models.py:10 analysis/templates/analysis/dashboard.html:369
+#: analysis/templates/analysis/history.html:127
+msgid "Baik"
+msgstr "Good"
+
+#: analysis/models.py:11 analysis/templates/analysis/dashboard.html:370
+#: analysis/templates/analysis/history.html:128
+msgid "Aus"
+msgstr "Worn"
+
+#: analysis/models.py:12 analysis/templates/analysis/dashboard.html:371
+#: analysis/templates/analysis/history.html:129
+msgid "Rusak"
+msgstr "Damaged"
+
+#: analysis/models.py:13 analysis/templates/analysis/dashboard.html:372
+#: analysis/templates/analysis/history.html:130
+msgid "Tidak Diketahui"
+msgstr "Unknown"
+
+#: analysis/models.py:14 analysis/templates/analysis/dashboard.html:373
+msgid "Bukan Ban"
+msgstr "Not a Tire"
+
+#: analysis/models.py:18 analysis/templates/analysis/dashboard.html:124
+#: analysis/templates/analysis/dashboard.html:135
+#: analysis/templates/analysis/dashboard.html:386
+msgid "Depan"
+msgstr "Front"
+
+#: analysis/models.py:19 analysis/templates/analysis/dashboard.html:125
+#: analysis/templates/analysis/dashboard.html:387
+msgid "Belakang"
+msgstr "Rear"
+
+#: analysis/models.py:34 analysis/models.py:35
+msgid "Analisis Ban"
+msgstr "Tire Analysis"
+
+#: analysis/templates/analysis/dashboard.html:4
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: analysis/templates/analysis/dashboard.html:20
+msgid "DeteksiBan"
+msgstr "Tire detection"
+
+#: analysis/templates/analysis/dashboard.html:25
+#: analysis/templates/analysis/dashboard.html:36
+msgid "Ganti foto profil"
+msgstr "Change profile photo"
+
+#: analysis/templates/analysis/dashboard.html:35
+#: analysis/templates/analysis/detail.html:63
+#: analysis/templates/analysis/history.html:49
+msgid "Pengguna Aktif"
+msgstr "Active User"
+
+#: analysis/templates/analysis/dashboard.html:39
+#: analysis/templates/analysis/detail.html:66
+#: analysis/templates/analysis/history.html:52
+msgid "Menu Utama"
+msgstr "Main Menu"
+
+#: analysis/templates/analysis/dashboard.html:40
+#: analysis/templates/analysis/detail.html:69
+#: analysis/templates/analysis/history.html:55
+msgid "Dashboard Kamera"
+msgstr "Camera Dashboard"
+
+#: analysis/templates/analysis/dashboard.html:41
+#: analysis/templates/analysis/detail.html:73
+#: analysis/templates/analysis/history.html:4
+#: analysis/templates/analysis/history.html:59
+#: analysis/templates/analysis/history.html:88
+msgid "Riwayat Analisis"
+msgstr "Analysis History"
+
+#: analysis/templates/analysis/dashboard.html:42
+#: analysis/templates/analysis/detail.html:4
+#: analysis/templates/analysis/detail.html:77
+#: analysis/templates/analysis/detail.html:102
+#: analysis/templates/analysis/history.html:63
+msgid "Detail Analisis"
+msgstr "Select Analysis"
+
+#: analysis/templates/analysis/dashboard.html:43
+#: analysis/templates/analysis/dashboard.html:59
+msgid "Bantuan"
+msgstr "Help"
+
+#: analysis/templates/analysis/dashboard.html:44
+#: analysis/templates/analysis/dashboard.html:330
+#: analysis/templates/analysis/dashboard.html:343
+#: analysis/templates/analysis/dashboard.html:348
+msgid "Kirim Pengaduan"
+msgstr "Send Complaint"
+
+#: analysis/templates/analysis/dashboard.html:45
+#: analysis/templates/analysis/dashboard.html:60
+#: analysis/templates/analysis/dashboard.html:331
+#: analysis/templates/analysis/dashboard.html:336
+msgid "Chatbot Bantuan"
+msgstr "Help Chatbot"
+
+#: analysis/templates/analysis/dashboard.html:46
+#: analysis/templates/analysis/dashboard.html:56
+#: analysis/templates/analysis/detail.html:79
+#: analysis/templates/analysis/history.html:65
+msgid "Akun"
+msgstr "Account"
+
+#: analysis/templates/analysis/dashboard.html:47
+#: analysis/templates/analysis/detail.html:82
+#: analysis/templates/analysis/history.html:68
+#: core/templates/core/delete_account.html:4
+#: core/templates/core/delete_account.html:49
+msgid "Hapus Akun"
+msgstr "Create Account"
+
+#: analysis/templates/analysis/dashboard.html:48
+#: analysis/templates/analysis/detail.html:86
+#: analysis/templates/analysis/history.html:72
+msgid "Keluar"
+msgstr "Logout"
+
+#: analysis/templates/analysis/dashboard.html:53
+msgid "Login untuk menggunakan semua fitur"
+msgstr "Login to use all features"
+
+#: analysis/templates/analysis/dashboard.html:57
+#
+#| msgid "Masalah akun / login"
+msgid "Masuk / Login"
+msgstr "Account / login issue"
+
+#: analysis/templates/analysis/dashboard.html:58
+msgid "Daftar Akun"
+msgstr "Register Account"
+
+#: analysis/templates/analysis/dashboard.html:65
+msgid "Pasang Aplikasi"
+msgstr "Install App"
+
+#: analysis/templates/analysis/dashboard.html:66
+#: analysis/templates/analysis/detail.html:90
+#: analysis/templates/analysis/history.html:76
+msgid "Bahasa"
+msgstr "Language"
+
+#: analysis/templates/analysis/dashboard.html:79
+#
+#| msgid "DeteksiBan"
+msgid "Deteksi Ban "
+msgstr "DeteksiBan"
+
+#: analysis/templates/analysis/dashboard.html:99
+#: analysis/templates/analysis/dashboard.html:151
+#: analysis/templates/analysis/dashboard.html:167
+#: core/templates/core/login.html:4 core/templates/core/login.html:66
+msgid "Masuk"
+msgstr "Login"
+
+#: analysis/templates/analysis/dashboard.html:112
+msgid "Total Analisis"
+msgstr "Total Analyses"
+
+#: analysis/templates/analysis/dashboard.html:113
+msgid "Resolusi"
+msgstr "Resolution"
+
+#: analysis/templates/analysis/dashboard.html:114
+#: analysis/templates/analysis/detail.html:178
+#: analysis/templates/analysis/history.html:151
+msgid "Tahun Ban"
+msgstr "Tire Year"
+
+#: analysis/templates/analysis/dashboard.html:114
+#: analysis/templates/analysis/dashboard.html:397
+msgid "Masukkan tahun ban untuk melihat kelayakan"
+msgstr "Enter tire year to check eligibility"
+
+#: analysis/templates/analysis/dashboard.html:119
+msgid "TAHUN BAN"
+msgstr "TIRE YEAR"
+
+#: analysis/templates/analysis/dashboard.html:120
+msgid "cth: 2019"
+msgstr "e.g. 2019"
+
+#: analysis/templates/analysis/dashboard.html:133
+msgid "Live Kamera"
+msgstr "Live Camera"
+
+#: analysis/templates/analysis/dashboard.html:134
+msgid "Memulai..."
+msgstr "Starting..."
+
+#: analysis/templates/analysis/dashboard.html:143
+msgid "Izin kamera diperlukan"
+msgstr "Camera permission required"
+
+#: analysis/templates/analysis/dashboard.html:144
+msgid "Kamera dimatikan"
+msgstr "Camera is off"
+
+#: analysis/templates/analysis/dashboard.html:149
+msgid "Login untuk menggunakan kamera & upload"
+msgstr "Login to use camera & upload"
+
+#: analysis/templates/analysis/dashboard.html:152
+#: core/templates/core/register.html:4
+msgid "Daftar"
+msgstr "Register"
+
+#: analysis/templates/analysis/dashboard.html:160
+#: analysis/templates/analysis/dashboard.html:383
+msgid "Matikan"
+msgstr "Turn Off"
+
+#: analysis/templates/analysis/dashboard.html:161
+msgid "Upload"
+msgstr "Upload"
+
+#: analysis/templates/analysis/dashboard.html:163
+msgid "Potret"
+msgstr "Capture"
+
+#: analysis/templates/analysis/dashboard.html:164
+#: analysis/templates/analysis/dashboard.html:384
+msgid "Coba Lagi"
+msgstr "Retry"
+
+#: analysis/templates/analysis/dashboard.html:166
+msgid "Login diperlukan untuk fitur ini"
+msgstr "Login required for this feature"
+
+#: analysis/templates/analysis/dashboard.html:175
+msgid "Hasil & Analisis"
+msgstr "Result & Analysis"
+
+#: analysis/templates/analysis/dashboard.html:176
+msgid "Menunggu"
+msgstr "Waiting"
+
+#: analysis/templates/analysis/dashboard.html:177
+#: analysis/templates/analysis/dashboard.html:182
+#: analysis/templates/analysis/dashboard.html:390
+msgid "Menganalisis..."
+msgstr "Analyzing..."
+
+#: analysis/templates/analysis/dashboard.html:184
+#
+#| msgid "Menganalisis..."
+msgid "Menganalisis gambar..."
+msgstr "Analyzing..."
+
+#: analysis/templates/analysis/dashboard.html:187
+msgid "Belum ada foto"
+msgstr "No photo yet"
+
+#: analysis/templates/analysis/dashboard.html:196
+msgid "Grayscale + CLAHE"
+msgstr "Grayscale + CLAHE"
+
+#: analysis/templates/analysis/dashboard.html:203
+msgid "L1 Heuristik"
+msgstr "L1 Heuristic"
+
+#: analysis/templates/analysis/dashboard.html:204
+msgid "L2 OC-SVM"
+msgstr "L2 OC-SVM"
+
+#: analysis/templates/analysis/dashboard.html:205
+msgid "L3 Confidence"
+msgstr "L3 Confidence"
+
+#: analysis/templates/analysis/dashboard.html:208
+msgid "Probabilitas"
+msgstr "Probabilities"
+
+#: analysis/templates/analysis/dashboard.html:209
+msgid "Tear"
+msgstr "Tear"
+
+#: analysis/templates/analysis/dashboard.html:210
+msgid "cracked"
+msgstr "Cracked"
+
+#: analysis/templates/analysis/dashboard.html:211
+msgid "normal"
+msgstr "Normal"
+
+#: analysis/templates/analysis/dashboard.html:219
+#: analysis/templates/analysis/dashboard.html:385
+msgid "analisis"
+msgstr "analyses"
+
+#: analysis/templates/analysis/dashboard.html:221
+msgid "Hapus"
+msgstr "Delete"
+
+#: analysis/templates/analysis/dashboard.html:222
+#: analysis/templates/analysis/dashboard.html:240
+msgid "Unduh"
+msgstr "Download"
+
+#: analysis/templates/analysis/dashboard.html:229
+msgid "Foto Diambil"
+msgstr "Photos Taken"
+
+#: analysis/templates/analysis/dashboard.html:230
+msgid "Foto yang diambil akan muncul di sini"
+msgstr "Captured photos will appear here"
+
+#: analysis/templates/analysis/dashboard.html:237
+msgid "Analisis PLT (Kepercayaan Model / Akurasi)"
+msgstr "PLT Analysis (Model Confidence / Accuracy)"
+
+#: analysis/templates/analysis/dashboard.html:257
+#: analysis/templates/analysis/detail.html:144
+#
+#| msgid "Belum ada foto"
+msgid "Belum ada analisis"
+msgstr "No photo yet"
+
+#: analysis/templates/analysis/dashboard.html:283
+msgid "Akurasi Model"
+msgstr "Model Accuracy"
+
+#: analysis/templates/analysis/dashboard.html:283
+#
+#| msgid "Akurasi model berdasarkan metadata training"
+msgid "Berdasarkan metadata training"
+msgstr "Model accuracy based on training metadata"
+
+#: analysis/templates/analysis/dashboard.html:284
+msgid "Kelayakan Ban"
+msgstr "Tire Eligibility"
+
+#: analysis/templates/analysis/dashboard.html:284
+#
+#| msgid "Umur > 3 tahun: ban harus diganti"
+msgid "Umur > 3 tahun: ganti ban"
+msgstr "Age > 3 years: tire must be replaced"
+
+#: analysis/templates/analysis/dashboard.html:285
+#
+#| msgid "Confidence Prediksi"
+msgid "Conf. Prediksi"
+msgstr "Prediction Confidence"
+
+#: analysis/templates/analysis/dashboard.html:285
+#
+#| msgid "Confidence dari prediksi terbaru"
+msgid "Confidence prediksi terbaru"
+msgstr "Confidence from latest prediction"
+
+#: analysis/templates/analysis/dashboard.html:337
+msgid ""
+"Halo! Saya asisten DeteksiBan. Ada yang bisa saya bantu seputar analisis ban "
+"Anda?"
+msgstr ""
+
+#: analysis/templates/analysis/dashboard.html:338
+msgid "Ketik pesan..."
+msgstr "Type a message..."
+
+#: analysis/templates/analysis/dashboard.html:338
+msgid "Kirim"
+msgstr "Send"
+
+#: analysis/templates/analysis/dashboard.html:345
+msgid "Kategori Masalah"
+msgstr "Problem Category"
+
+#: analysis/templates/analysis/dashboard.html:345
+msgid "Pilih kategori"
+msgstr "Select category"
+
+#: analysis/templates/analysis/dashboard.html:345
+msgid "Analisis tidak akurat"
+msgstr "Inaccurate analysis"
+
+#: analysis/templates/analysis/dashboard.html:345
+msgid "Kamera tidak berfungsi"
+msgstr "Camera not working"
+
+#: analysis/templates/analysis/dashboard.html:345
+msgid "Masalah akun / login"
+msgstr "Account / login issue"
+
+#: analysis/templates/analysis/dashboard.html:345
+msgid "Performa lambat"
+msgstr "Slow performance"
+
+#: analysis/templates/analysis/dashboard.html:345
+msgid "Lainnya"
+msgstr "Other"
+
+#: analysis/templates/analysis/dashboard.html:346
+#: core/templates/core/password_reset.html:40
+msgid "Email Anda"
+msgstr "Your Email"
+
+#: analysis/templates/analysis/dashboard.html:347
+msgid "Deskripsi Masalah"
+msgstr "Problem Description"
+
+#: analysis/templates/analysis/dashboard.html:347
+msgid "Jelaskan masalah yang Anda alami..."
+msgstr "Describe the problem you are experiencing..."
+
+#: analysis/templates/analysis/dashboard.html:352
+#
+#| msgid "Menganalisis..."
+msgid "Mengirim..."
+msgstr "Analyzing..."
+
+#: analysis/templates/analysis/dashboard.html:354
+#
+#| msgid "Kirim Pengaduan"
+msgid "Mengirim pengaduan..."
+msgstr "Send Complaint"
+
+#: analysis/templates/analysis/dashboard.html:356
+msgid "Pengaduan Terkirim!"
+msgstr "Complaint Sent!"
+
+#: analysis/templates/analysis/dashboard.html:356
+msgid "Tim kami akan menghubungi Anda dalam 1×24 jam."
+msgstr "Our team will contact you within 1×24 hours."
+
+#: analysis/templates/analysis/dashboard.html:377
+msgid "TERDETEKSI SEBAGAI BAN"
+msgstr "DETECTED AS TIRE"
+
+#: analysis/templates/analysis/dashboard.html:378
+msgid "BUKAN BAN"
+msgstr "NOT A TIRE"
+
+#: analysis/templates/analysis/dashboard.html:379
+msgid "BAN —"
+msgstr "TIRE —"
+
+#: analysis/templates/analysis/dashboard.html:382
+msgid "Menyala"
+msgstr "On"
+
+#: analysis/templates/analysis/dashboard.html:388
+msgid "Gagal akses kamera"
+msgstr "Failed to access camera"
+
+#: analysis/templates/analysis/dashboard.html:389
+msgid "Foto diambil!"
+msgstr "Photo captured!"
+
+#: analysis/templates/analysis/dashboard.html:391
+msgid "Analisis selesai"
+msgstr "Analysis complete"
+
+#: analysis/templates/analysis/dashboard.html:392
+msgid "Tidak ada gambar untuk diunduh"
+msgstr "No image to download"
+
+#: analysis/templates/analysis/dashboard.html:393
+msgid "Riwayat dihapus"
+msgstr "History cleared"
+
+#: analysis/templates/analysis/dashboard.html:394
+msgid "Analisis dihapus"
+msgstr "Analysis deleted"
+
+#: analysis/templates/analysis/dashboard.html:395
+msgid "Pengaduan terkirim!"
+msgstr "Complaint sent!"
+
+#: analysis/templates/analysis/dashboard.html:396
+msgid "Ketik pesan terlebih dahulu"
+msgstr "Type a message first"
+
+#: analysis/templates/analysis/dashboard.html:398
+msgid "Ban harus diganti"
+msgstr "Tire must be replaced"
+
+#: analysis/templates/analysis/dashboard.html:399
+msgid "Ban masih layak"
+msgstr "Tire is still good"
+
+#: analysis/templates/analysis/dashboard.html:400
+msgid "tahun"
+msgstr "years"
+
+#: analysis/templates/analysis/dashboard.html:401
+msgid "Gambar yang diupload bukan ban. Silakan ambil foto ban yang jelas."
+msgstr "Uploaded image is not a tire. Please take a clear tire photo."
+
+#: analysis/templates/analysis/dashboard.html:424
+msgid "Aplikasi akan diunduh..."
+msgstr "App will be downloaded..."
+
+#: analysis/templates/analysis/detail.html:103
+msgid "Informasi lengkap setiap analisis ban"
+msgstr "Full details for each tire analysis"
+
+#: analysis/templates/analysis/detail.html:124
+#
+#| msgid "Detail Analisis"
+msgid "Pilih Analisis"
+msgstr "Select Analysis"
+
+#: analysis/templates/analysis/detail.html:168
+#: analysis/templates/analysis/history.html:148
+#
+#| msgid "Kondisi:"
+msgid "Kondisi"
+msgstr "Condition:"
+
+#: analysis/templates/analysis/detail.html:174
+#: analysis/templates/analysis/history.html:150
+msgid "Kepercayaan"
+msgstr "Confidence"
+
+#: analysis/templates/analysis/detail.html:182
+msgid "Mode Kamera"
+msgstr "Camera Mode"
+
+#: analysis/templates/analysis/detail.html:189
+msgid "Data Mentah Model"
+msgstr "Model Raw Data"
+
+#: analysis/templates/analysis/detail.html:198
+#
+#| msgid "Unduh"
+msgid "Unduh Foto"
+msgstr "Download"
+
+#: analysis/templates/analysis/detail.html:202
+msgid "Ke Riwayat"
+msgstr "To History"
+
+#: analysis/templates/analysis/detail.html:210
+msgid "Pilih analisis dari daftar di sebelah kiri untuk melihat detailnya."
+msgstr "Select an analysis from the list on the left to view details."
+
+#: analysis/templates/analysis/history.html:89
+#
+#| msgid "Hasil Analisis Ban"
+msgid "Semua hasil analisis ban Anda"
+msgstr "Tire Analysis Result"
+
+#: analysis/templates/analysis/history.html:110
+msgid "Total"
+msgstr "Total"
+
+#: analysis/templates/analysis/history.html:113
+#
+#| msgid "Kondisi:"
+msgid "Kondisi Baik"
+msgstr "Condition:"
+
+#: analysis/templates/analysis/history.html:117
+msgid "Perlu Perhatian"
+msgstr "Needs Attention"
+
+#: analysis/templates/analysis/history.html:124
+msgid "Filter:"
+msgstr "Filter:"
+
+#: analysis/templates/analysis/history.html:126
+#
+#| msgid "Kondisi:"
+msgid "Semua Kondisi"
+msgstr "Condition:"
+
+#: analysis/templates/analysis/history.html:132
+msgid "Cari label..."
+msgstr "Search label..."
+
+#: analysis/templates/analysis/history.html:133
+msgid "Reset"
+msgstr "Reset"
+
+#: analysis/templates/analysis/history.html:139
+msgid "Semua Riwayat"
+msgstr "All History"
+
+#: analysis/templates/analysis/history.html:140
+#
+#| msgid "Hapus Akun"
+msgid "Hapus semua"
+msgstr "Create Account"
+
+#: analysis/templates/analysis/history.html:147
+msgid "Foto"
+msgstr "Photo"
+
+#: analysis/templates/analysis/history.html:149
+msgid "Label"
+msgstr "Label"
+
+#: analysis/templates/analysis/history.html:152
+msgid "Mode"
+msgstr "Mode"
+
+#: analysis/templates/analysis/history.html:153
+msgid "Waktu"
+msgstr "Time"
+
+#: analysis/templates/analysis/history.html:191
+msgid "Belum ada riwayat. Mulai analisis dari dashboard."
+msgstr "No history yet. Start analyzing from the dashboard."
+
+#: analysis/templates/analysis/history.html:192
+#
+#| msgid "Dashboard"
+msgid "Ke Dashboard"
+msgstr "Dashboard"
+
+#: core/forms.py:10 core/templates/core/register.html:36
+#
+#| msgid "Depan"
+msgid "Nama Depan"
+msgstr "Front"
+
+#: core/forms.py:11
+msgid "Nama depan Anda"
+msgstr "Your first name"
+
+#: core/forms.py:15 core/templates/core/register.html:44
+#
+#| msgid "Belakang"
+msgid "Nama Belakang"
+msgstr "Rear"
+
+#: core/forms.py:16
+msgid "Nama belakang Anda"
+msgstr "Your last name"
+
+#: core/forms.py:20 core/templates/core/password_reset.html:35
+#: core/templates/core/register.html:54
+#
+#| msgid "Email Anda"
+msgid "Email"
+msgstr "Your Email"
+
+#: core/forms.py:28 core/templates/core/register.html:65
+msgid "Username unik"
+msgstr "Unique username"
+
+#: core/forms.py:34 core/forms.py:51
+msgid "Kata sandi"
+msgstr "Password"
+
+#: core/forms.py:36
+msgid "Konfirmasi kata sandi"
+msgstr "Confirm password"
+
+#: core/forms.py:41
+msgid "Email ini sudah terdaftar."
+msgstr "This email is already registered."
+
+#: core/forms.py:49 core/templates/core/login.html:35
+#: core/templates/core/register.html:63
+msgid "Username"
+msgstr "Username"
+
+#: core/templates/core/delete_account.html:42
+#
+#| msgid "Dashboard"
+msgid "Kembali ke Dashboard"
+msgstr "Dashboard"
+
+#: core/templates/core/delete_account.html:51
+msgid "Tindakan ini tidak dapat dibatalkan."
+msgstr "This action cannot be undone."
+
+#: core/templates/core/delete_account.html:63
+msgid "Data berikut akan dihapus permanen:"
+msgstr "The following data will be permanently deleted:"
+
+#: core/templates/core/delete_account.html:65
+#
+#| msgid "Riwayat Analisis"
+msgid "Semua riwayat analisis ban"
+msgstr "Analysis History"
+
+#: core/templates/core/delete_account.html:66
+msgid "Foto yang diunggah"
+msgstr "Uploaded photo"
+
+#: core/templates/core/delete_account.html:67
+msgid "Data profil & akun"
+msgstr "Profile & account data"
+
+#: core/templates/core/delete_account.html:74
+msgid "Ketik"
+msgstr "Type"
+
+#: core/templates/core/delete_account.html:74
+msgid "untuk konfirmasi"
+msgstr "to confirm"
+
+#: core/templates/core/delete_account.html:81
+msgid "Hapus Akun Saya Selamanya"
+msgstr "Delete My Account Forever"
+
+#: core/templates/core/delete_account.html:86
+msgid "Batal, kembali ke dashboard"
+msgstr "Cancel, return to dashboard"
+
+#: core/templates/core/login.html:20
+msgid "Selamat Datang"
+msgstr "Welcome"
+
+#: core/templates/core/login.html:21
+msgid "Masuk ke akun Anda untuk mulai menganalisis ban."
+msgstr "Log in to your account to start analyzing tires."
+
+#: core/templates/core/login.html:40
+msgid "Username Anda"
+msgstr "Your username"
+
+#: core/templates/core/login.html:49 core/templates/core/register.html:73
+msgid "Kata Sandi"
+msgstr "Password"
+
+#: core/templates/core/login.html:70
+msgid "Belum punya akun?"
+msgstr "Don't have an account?"
+
+#: core/templates/core/login.html:71
+msgid "Daftar sekarang"
+msgstr "Register now"
+
+#: core/templates/core/login.html:75
+#
+#| msgid "Kata sandi"
+msgid "Lupa kata sandi?"
+msgstr "Password"
+
+#: core/templates/core/password_reset.html:4
+#: core/templates/core/password_reset.html:20
+#
+#| msgid "Kata Sandi"
+msgid "Reset Kata Sandi"
+msgstr "Password"
+
+#: core/templates/core/password_reset.html:21
+msgid ""
+"Masukkan email Anda dan kami akan mengirimkan link untuk mereset kata sandi."
+msgstr ""
+
+#: core/templates/core/password_reset.html:53
+msgid "Kirim Link Reset"
+msgstr ""
+
+#: core/templates/core/password_reset.html:57
+#: core/templates/core/password_reset_confirm.html:69
+#: core/templates/core/password_reset_done.html:29
+#
+#| msgid "Dashboard"
+msgid "Kembali ke Login"
+msgstr "Dashboard"
+
+#: core/templates/core/password_reset_complete.html:4
+msgid "Reset Kata Sandi Berhasil"
+msgstr ""
+
+#: core/templates/core/password_reset_complete.html:20
+msgid "Kata Sandi Berhasil Direset"
+msgstr ""
+
+#: core/templates/core/password_reset_complete.html:21
+msgid ""
+"Kata sandi Anda telah berhasil diubah. Sekarang Anda dapat masuk dengan kata "
+"sandi baru."
+msgstr ""
+
+#: core/templates/core/password_reset_complete.html:25
+msgid "Reset kata sandi berhasil!"
+msgstr ""
+
+#: core/templates/core/password_reset_complete.html:28
+#
+#| msgid "Daftar sekarang"
+msgid "Masuk Sekarang"
+msgstr "Register now"
+
+#: core/templates/core/password_reset_confirm.html:4
+#: core/templates/core/password_reset_confirm.html:20
+#
+#| msgid "Kata Sandi"
+msgid "Setel Kata Sandi Baru"
+msgstr "Password"
+
+#: core/templates/core/password_reset_confirm.html:21
+#
+#| msgid "Masukkan tahun ban untuk melihat kelayakan"
+msgid "Masukkan kata sandi baru untuk akun Anda."
+msgstr "Enter tire year to check eligibility"
+
+#: core/templates/core/password_reset_confirm.html:35
+#
+#| msgid "Kata Sandi"
+msgid "Kata Sandi Baru"
+msgstr "Password"
+
+#: core/templates/core/password_reset_confirm.html:48
+#
+#| msgid "Konfirmasi kata sandi"
+msgid "Konfirmasi Kata Sandi"
+msgstr "Confirm password"
+
+#: core/templates/core/password_reset_confirm.html:65
+#
+#| msgid "Kata Sandi"
+msgid "Setel Kata Sandi"
+msgstr "Password"
+
+#: core/templates/core/password_reset_done.html:4
+msgid "Link Reset Terkirim"
+msgstr ""
+
+#: core/templates/core/password_reset_done.html:20
+#
+#| msgid "Email Anda"
+msgid "Periksa Email Anda"
+msgstr "Your Email"
+
+#: core/templates/core/password_reset_done.html:21
+msgid ""
+"Kami telah mengirimkan link untuk mereset kata sandi ke email Anda. Jika "
+"Anda tidak melihat email tersebut, periksa folder spam."
+msgstr ""
+
+#: core/templates/core/password_reset_done.html:25
+msgid "Link reset telah dikirim!"
+msgstr ""
+
+#: core/templates/core/password_reset_email.html:2
+msgid "Halo"
+msgstr ""
+
+#: core/templates/core/password_reset_email.html:4
+msgid ""
+"Anda menerima email ini karena Anda meminta reset kata sandi untuk akun "
+"DeteksiBan Anda."
+msgstr ""
+
+#: core/templates/core/password_reset_email.html:6
+msgid "Silakan klik link berikut untuk mereset kata sandi Anda:"
+msgstr ""
+
+#: core/templates/core/password_reset_email.html:10
+#
+#| msgid "Tim kami akan menghubungi Anda dalam 1×24 jam."
+msgid "Link ini akan kedaluwarsa dalam 24 jam."
+msgstr "Our team will contact you within 1×24 hours."
+
+#: core/templates/core/password_reset_email.html:12
+msgid "Jika Anda tidak meminta reset kata sandi, abaikan email ini."
+msgstr ""
+
+#: core/templates/core/password_reset_email.html:14
+msgid "Salam,"
+msgstr ""
+
+#: core/templates/core/password_reset_email.html:15
+#
+#| msgid "DeteksiBan"
+msgid "Tim DeteksiBan"
+msgstr "DeteksiBan"
+
+#: core/templates/core/password_reset_subject.txt:2
+msgid "Reset Kata Sandi DeteksiBan"
+msgstr ""
+
+#: core/templates/core/register.html:20 core/templates/core/register.html:92
+#
+#| msgid "Hapus Akun"
+msgid "Buat Akun"
+msgstr "Create Account"
+
+#: core/templates/core/register.html:21
+msgid "Daftar gratis dan mulai analisis ban hari ini."
+msgstr "Register for free and start tire analysis today."
+
+#: core/templates/core/register.html:38
+msgid "Budi"
+msgstr "Budi"
+
+#: core/templates/core/register.html:46
+msgid "Santoso"
+msgstr "Santoso"
+
+#: core/templates/core/register.html:79
+msgid "Konfirmasi"
+msgstr "Confirmation"
+
+#: core/templates/core/register.html:96
+msgid "Sudah punya akun?"
+msgstr "Already have an account?"
+
+#: core/templates/core/register.html:97
+msgid "Masuk di sini"
+msgstr "Sign in here"
+
+#: core/views.py:25
+#, python-format
+msgid "Akun berhasil dibuat! Selamat datang, %(name)s."
+msgstr "Account created successfully! Welcome, %(name)s."
+
+#: core/views.py:72
+#
+#| msgid "Analisis dihapus"
+msgid "Akun Anda telah dihapus."
+msgstr "Analysis deleted"
+
+#: core/views.py:75
+msgid "Konfirmasi salah. Ketik HAPUS untuk melanjutkan."
+msgstr "Wrong confirmation. Type DELETE to continue."
+
+#: core/views.py:104
+#
+#| msgid "Kategori Masalah"
+msgid "Kategori masalah harus dipilih."
+msgstr "Problem Category"
+
+#: core/views.py:106
+#
+#| msgid "Deskripsi Masalah"
+msgid "Deskripsi masalah harus diisi."
+msgstr "Problem Description"
+
+#: core/views.py:108
+#, python-format
+msgid "Laporan Pengaduan: %(category)s"
+msgstr ""
+
+#: core/views.py:110
+#, python-format
+msgid ""
+"Kategori: %(category)s\n"
+"Email pengguna: %(email)s\n"
+"Deskripsi: %(description)s\n"
+msgstr ""
+
+#: core/views.py:115
+msgid "[tidak tersedia]"
+msgstr ""
+
+#~ msgid "Kamera Potret"
+#~ msgstr "Portrait Camera"
+
+#~ msgid "Ambil foto ban untuk dianalisis secara otomatis"
+#~ msgstr "Take a tire photo for automatic analysis"
+
+#~ msgid "Masukkan tahun ban"
+#~ msgstr "Enter tire year"
+
+#~ msgid "Detail:"
+#~ msgstr "Detail:"

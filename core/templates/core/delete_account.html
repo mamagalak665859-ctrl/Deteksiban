@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Hapus Akun" %} — DeteksiBan{% endblock %}
+
+{% block head_extras %}
+<link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/auth.css' %}">
+<style>
+  .delete-card { border-color: rgba(239,68,68,.3); }
+  .delete-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25);
+    display: grid; place-items: center; margin-bottom: 20px;
+  }
+  .delete-icon svg { width: 26px; height: 26px; stroke: #ef4444; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .danger-title { font-family: var(--font-h); font-size: 24px; font-weight: 800; color: #ef4444; }
+  .confirm-input { border-color: rgba(239,68,68,.35) !important; }
+  .confirm-input:focus { border-color: #ef4444 !important; background: rgba(239,68,68,.06) !important; }
+  .btn-danger {
+    width: 100%; padding: 13px; background: linear-gradient(135deg,#ef4444,#dc2626);
+    color: #fff; font-size: 15px; font-weight: 700; border: none; border-radius: 12px;
+    margin-top: 8px; cursor: pointer; opacity: .4; pointer-events: none;
+    transition: opacity .2s, transform .2s;
+  }
+  .btn-danger.active { opacity: 1; pointer-events: auto; }
+  .btn-danger.active:hover { transform: translateY(-1px); }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  .warn-box { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2); border-radius: 10px; padding: 14px; margin-bottom: 22px; font-size: 13px; color: #fca5a5; line-height: 1.6; }
+  .warn-box ul { margin: 6px 0 0 16px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="auth-page">
+  <div class="auth-card delete-card">
+
+    <a href="{% url 'dashboard' %}" class="back-link">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      {% trans "Kembali ke Dashboard" %}
+    </a>
+
+    <div class="delete-icon">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+    </div>
+
+    <h1 class="danger-title">{% trans "Hapus Akun" %}</h1>
+    <p class="auth-sub" style="margin-bottom:20px">
+      {% trans "Tindakan ini tidak dapat dibatalkan." %}
+    </p>
+
+    {% if messages %}
+    <ul class="msg-list">
+      {% for m in messages %}
+      <li class="{{ m.tags }}">{{ m }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="warn-box">
+      <strong>{% trans "Data berikut akan dihapus permanen:" %}</strong>
+      <ul>
+        <li>{% trans "Semua riwayat analisis ban" %}</li>
+        <li>{% trans "Foto yang diunggah" %}</li>
+        <li>{% trans "Data profil & akun" %}</li>
+      </ul>
+    </div>
+
+    <form method="post" novalidate onsubmit="handleDeleteAccount(event)">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">{% trans "Ketik" %} <strong style="color:#ef4444">HAPUS</strong> {% trans "untuk konfirmasi" %}</label>
+        <input type="text" name="confirm_text" id="confirmInput"
+               class="form-control confirm-input"
+               placeholder="HAPUS" autocomplete="off"
+               oninput="document.getElementById('deleteBtn').classList.toggle('active', this.value==='HAPUS')">
+      </div>
+      <button type="submit" class="btn-danger" id="deleteBtn">
+        {% trans "Hapus Akun Saya Selamanya" %}
+      </button>
+    </form>
+
+    <p class="auth-switch" style="margin-top:18px">
+      <a href="{% url 'dashboard' %}" style="color:var(--muted)">{% trans "Batal, kembali ke dashboard" %}</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  function handleDeleteAccount(event) {
+    const btn = document.getElementById('deleteBtn');
+    const stateMgr = new ButtonStateManager(btn);
+    stateMgr.setLoading('{% trans "Menghapus..." %}');
+    // Let form submit proceed after showing loading state
+    setTimeout(() => {
+      event.target.submit();
+    }, 300);
+  }
+</script>
+{% endblock %}

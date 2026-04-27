@@ -1,0 +1,17 @@
+{
+  "best_C": 20.0,
+  "best_gamma": "0.01",
+  "best_val_f1": 0.891,
+  "pca_n_components": 42,
+  "n_train_samples": 2680,
+  "k_features": 90,
+  "total_features": 363,
+  "target_per_class": 1000,
+  "classes": [
+    "Tear",
+    "cracked",
+    "normal"
+  ],
+  "hog_pixels_per_cell": 32,
+  "sklearn_version": "1.8.0"
+}

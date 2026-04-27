@@ -1,0 +1,727 @@
+{% extends 'base.html' %}
+{% load i18n static avatar_tags %}
+
+{% block title %}{% trans "Dashboard" %} — DeteksiBan AI{% endblock %}
+
+{% block head_extras %}
+  <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'analysis/css/dashboard.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+{% endblock %}
+
+{% block body %}
+{% csrf_token %}
+<div class="shell">
+  <div class="ov" id="ov" onclick="closeSB()"></div>
+
+  <!-- ════════════════════════════════════════════
+       SIDEBAR
+       ════════════════════════════════════════════ -->
+  <aside class="sb" id="sb">
+
+    <div class="sb-top">
+      <div class="brand">
+        <span class="bdot"></span>
+        {% trans "DeteksiBan" %}
+      </div>
+    </div>
+
+    {% if user.is_authenticated %}
+      <div class="sb-prof">
+        <div class="av-w" onclick="triggerAvatarUpload()" title="{% trans 'Ganti foto profil' %}">
+          <div class="av-c">
+            <span id="si">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+            <img
+              id="simg"
+              alt="avatar"
+              {% if user.profile.avatar and user.profile|avatar_exists %}
+                src="{{ user.profile.avatar.url }}"
+                style="display:block"
+              {% endif %}
+              onerror="this.style.display='none'"
+            >
+          </div>
+          <div class="av-ov">
+            <svg viewBox="0 0 24 24">
+              <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+          <div class="av-dot"></div>
+        </div>
+        <input type="file" id="avf" accept="image/*" style="display:none">
+        <div class="sb-name">{{ user.get_full_name|default:user.username }}</div>
+        <div class="sb-role">{% trans "Pengguna Aktif" %}</div>
+        <span class="sb-upl" onclick="triggerAvatarUpload()">{% trans "Ganti foto profil" %}</span>
+      </div>
+
+      <nav class="sb-nav">
+        <div class="ng">{% trans "Menu Utama" %}</div>
+
+        <a href="{% url 'dashboard' %}" class="ni act">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          {% trans "Dashboard Kamera" %}
+        </a>
+
+        <a href="{% url 'history' %}" class="ni">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          {% trans "Riwayat Analisis" %}
+        </a>
+
+        <a href="{% url 'detail' %}" class="ni">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          {% trans "Detail Analisis" %}
+        </a>
+
+        <div class="ng">{% trans "Bantuan" %}</div>
+
+        <button class="ni" onclick="openR()">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          {% trans "Kirim Pengaduan" %}
+        </button>
+
+        <button class="ni" onclick="openC()">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          {% trans "Chatbot Bantuan" %}
+        </button>
+
+        <div class="ng">{% trans "Akun" %}</div>
+
+        <a href="{% url 'delete_account' %}" class="ni ni-d">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          {% trans "Hapus Akun" %}
+        </a>
+
+        <a href="{% url 'logout' %}" class="ni">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          {% trans "Keluar" %}
+        </a>
+      </nav>
+
+    {% else %}
+      <div class="sb-guest-banner">
+        <div class="sg-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <p>{% trans "Login untuk menggunakan semua fitur" %}</p>
+      </div>
+
+      <nav class="sb-nav">
+        <div class="ng">{% trans "Akun" %}</div>
+
+        <a href="{% url 'login' %}" class="ni ni-auth">
+          <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          {% trans "Masuk / Login" %}
+        </a>
+
+        <a href="{% url 'register' %}" class="ni ni-reg">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          {% trans "Daftar Akun" %}
+        </a>
+
+        <div class="ng">{% trans "Bantuan" %}</div>
+
+        <button class="ni" onclick="openC()">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          {% trans "Chatbot Bantuan" %}
+        </button>
+      </nav>
+    {% endif %}
+
+    <div class="sb-ft">
+
+      <!-- Tombol Download Aplikasi (selalu tampil) -->
+      <a
+        href="/download-app/"
+        class="ni"
+        style="margin-bottom:8px; width:100%; justify-content:center; background:linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-weight:600; letter-spacing:.3px; text-decoration:none; display:flex; align-items:center; gap:8px; box-sizing:border-box; transition:opacity .2s;"
+        onmouseover="this.style.opacity='.85'"
+        onmouseout="this.style.opacity='1'"
+      >
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        {% trans "Unduh Aplikasi" %}
+      </a>
+
+      <!-- Tombol Pasang Aplikasi PWA (muncul otomatis jika browser mendukung) -->
+      <button
+        class="ni"
+        id="installBtn"
+        style="display:none; margin-bottom:12px; width:100%; justify-content:center"
+        onclick="installApp()"
+      >
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;margin-right:8px">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        {% trans "Pasang Aplikasi" %}
+      </button>
+
+      <div class="llbl">{% trans "Bahasa" %}</div>
+      <div class="lpills">
+        {% get_current_language as current_lang %}
+        <button type="button" class="lp {% if current_lang == 'id' %}act{% endif %}" onclick="switchLang('id')">🇮🇩 Indonesia</button>
+        <button type="button" class="lp {% if current_lang == 'en' %}act{% endif %}" onclick="switchLang('en')">🇬🇧 English</button>
+      </div>
+
+    </div><!-- /sb-ft -->
+
+  </aside><!-- /sidebar -->
+
+  <!-- ════════════════════════════════════════════
+       MAIN
+       ════════════════════════════════════════════ -->
+  <main class="main" id="mn">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="pg-info">
+        <div class="pg-t">{% trans "Deteksi Ban" %}</div>
+        <div class="pg-s"></div>
+      </div>
+      <div class="tb-right">
+        <div class="chips">
+          {% get_current_language as current_lang %}
+          <button type="button" class="chip {% if current_lang == 'id' %}act{% endif %}" onclick="switchLang('id')">ID</button>
+          <button type="button" class="chip {% if current_lang == 'en' %}act{% endif %}" onclick="switchLang('en')">EN</button>
+        </div>
+
+        {% if user.is_authenticated %}
+          <div class="av-mini-w" onclick="triggerAvatarUpload()">
+            <div class="av-mini">
+              <span id="mi">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+              <img id="mimg" alt="avatar" {% if user.profile.avatar %}src="{{ user.profile.avatar.url }}" style="display:block"{% endif %} onerror="this.style.display='none'">
+            </div>
+            <div class="av-mini-dot"></div>
+          </div>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn-topbar-login">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2">
+              <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+              <polyline points="10 17 15 12 10 7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+            {% trans "Masuk" %}
+          </a>
+        {% endif %}
+
+        <button class="tog" id="togBtn" onclick="togSB()" aria-label="Toggle sidebar">
+          <div class="tog-bar"></div>
+          <div class="tog-bar"></div>
+          <div class="tog-bar"></div>
+        </button>
+      </div>
+    </div><!-- /topbar -->
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Stats row -->
+      <div class="stats">
+        <div class="sc">
+          <div class="slbl">{% trans "Total Analisis" %}</div>
+          <div class="sval a" id="stAnal">{{ total_analyses }}</div>
+        </div>
+        <div class="sc">
+          <div class="slbl">{% trans "Resolusi" %}</div>
+          <div class="sval" style="font-size:14px;margin-top:2px" id="stRes">—</div>
+        </div>
+        <div class="sc">
+          <div class="slbl">{% trans "Tahun Ban" %}</div>
+          <div class="sval" style="font-size:14px;margin-top:2px" id="stY">—</div>
+          <div class="smeta" id="stYStatus">{% trans "Masukkan tahun ban untuk melihat kelayakan" %}</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="ctrl">
+        <div class="yr-g">
+          <span class="yr-lbl">{% trans "TAHUN BAN" %}</span>
+          <input
+            class="yr-in"
+            type="number"
+            id="tireYearInput"
+            placeholder="{% trans 'cth: 2019' %}"
+            min="1980"
+            max="2030"
+            oninput="document.getElementById('stY').textContent=this.value||'—'"
+          >
+        </div>
+        <div class="sep"></div>
+        <div class="ctog">
+          <button class="cb act" id="btnFront" onclick="setMode(this,'front','{% trans "Depan" %}')">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+            {% trans "Depan" %}
+          </button>
+          <button class="cb" id="btnRear" onclick="setMode(this,'rear','{% trans "Belakang" %}')">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            {% trans "Belakang" %}
+          </button>
+        </div>
+      </div>
+
+      <!-- Camera grid -->
+      <div class="cg">
+
+        <!-- Live cam card -->
+        <div class="cc">
+          <div class="cch">
+            <span class="clbl">{% trans "Live Kamera" %}</span>
+            <div class="sbadge" id="statusBadge">
+              <div class="sdot" id="statusDot"></div>
+              <span id="statusText">{% trans "Memulai..." %}</span>
+            </div>
+            <div class="mode-info" id="infoMode">{% trans "Depan" %}</div>
+          </div>
+
+          <div class="varea">
+            <div class="crn tl"></div>
+            <div class="crn tr"></div>
+            <div class="crn bl"></div>
+            <div class="crn br"></div>
+            <div class="scanl"></div>
+
+            <video id="video" autoplay playsinline muted style="display:none;width:100%;height:100%;object-fit:cover;border-radius:0"></video>
+            <canvas id="canvas" style="display:none"></canvas>
+
+            <div id="noCamState" class="vph">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <p id="noCamMsg">{% trans "Izin kamera diperlukan" %}</p>
+            </div>
+            <div id="camOffState" class="vph" style="display:none">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <p>{% trans "Kamera dimatikan" %}</p>
+            </div>
+
+            {% if not user.is_authenticated %}
+              <div class="auth-gate">
+                <div class="auth-gate-inner">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                  <p>{% trans "Login untuk menggunakan kamera & upload" %}</p>
+                  <div class="auth-gate-btns">
+                    <a href="{% url 'login' %}" class="auth-gate-btn primary">{% trans "Masuk" %}</a>
+                    <a href="{% url 'register' %}" class="auth-gate-btn">{% trans "Daftar" %}</a>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </div><!-- /varea -->
+
+          <div class="ccf">
+            {% if user.is_authenticated %}
+              <button id="btnToggleCam" class="btn btn-dr" onclick="toggleCamera()">
+                <svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 01-2-2V8"/></svg>
+                <span id="toggleCamLabel">{% trans "Matikan" %}</span>
+              </button>
+              <button id="uploadBtn" class="btn btn-ghost" onclick="document.getElementById('uploadInput').click()">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 5 17 10"/><line x1="12" y1="5" x2="12" y2="15"/></svg>
+                {% trans "Upload" %}
+              </button>
+              <input type="file" id="uploadInput" accept="image/*" style="display:none">
+              <button id="captureBtn" class="btn btn-p" onclick="capturePhoto()">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                {% trans "Potret" %}
+              </button>
+              <button id="retryBtn" class="btn btn-ghost" style="display:none" onclick="retryCamera()">
+                <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+                {% trans "Coba Lagi" %}
+              </button>
+            {% else %}
+              <span style="font-size:12px;color:var(--muted);flex:1">{% trans "Login diperlukan untuk fitur ini" %}</span>
+              <a href="{% url 'login' %}" class="btn btn-p">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2">
+                  <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+                  <polyline points="10 17 15 12 10 7"/>
+                  <line x1="15" y1="12" x2="3" y2="12"/>
+                </svg>
+                {% trans "Masuk" %}
+              </a>
+            {% endif %}
+          </div><!-- /ccf -->
+        </div><!-- /cc live -->
+
+        <!-- Result card -->
+        <div class="cc">
+          <div class="cch">
+            <span class="clbl">{% trans "Hasil & Analisis" %}</span>
+            <div class="sbadge" id="resultStatus" style="display:none;background:rgba(245,158,11,.1);color:#fde68a;border-color:rgba(245,158,11,.2)">
+              <div class="sdot" id="resultStatusDot" style="background:var(--warn);animation:none"></div>
+              <span id="resultStatusText">{% trans "Menunggu" %}</span>
+            </div>
+            <div class="sbadge analyzing" id="analyzingPill" style="display:none">
+              <div class="sdot live"></div>
+              {% trans "Menganalisis..." %}
+            </div>
+          </div>
+
+          <div class="rarea" id="rareaResult">
+            <div class="analysis-spinner" id="analysisSpinner" style="display:none">
+              <div class="spinner-grow text-primary" style="width:3rem;height:3rem" role="status">
+                <span class="visually-hidden">{% trans "Menganalisis..." %}</span>
+              </div>
+              <p style="margin-top:1rem;color:var(--muted)">{% trans "Menganalisis gambar..." %}</p>
+            </div>
+
+            <img id="resultImg" style="display:none;width:100%;height:100%;object-fit:cover;cursor:zoom-in" alt="Result">
+
+            <div id="resultEmpty" class="rph">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <p>{% trans "Belum ada foto" %}</p>
+            </div>
+
+            <!-- Inline analysis overlay -->
+            <div class="result-inline-overlay" id="resultInlineOverlay" style="display:none">
+              <div class="rio-top">
+                <div class="rio-cond-row">
+                  <span class="rio-icon">□</span>
+                  <span class="rio-label" id="rioLabel">BAN — CRACKED</span>
+                  <span class="rio-conf" id="rioConf">(62%)</span>
+                </div>
+                <div class="rio-subtitle">{% trans "Grayscale + CLAHE" %}</div>
+              </div>
+              <div class="rio-detected">
+                <span class="rio-det-icon">□</span>
+                <span class="rio-det-text" id="rioDetected">TERDETEKSI SEBAGAI BAN</span>
+              </div>
+              <div class="rio-layers">
+                <div class="rio-layer-row"><span class="rio-lk">□ {% trans "L1 Heuristik" %}</span><span class="rio-lv" id="rioL1">: —</span></div>
+                <div class="rio-layer-row"><span class="rio-lk">□ {% trans "L2 OC-SVM" %}</span><span class="rio-lv" id="rioL2">: —</span></div>
+                <div class="rio-layer-row"><span class="rio-lk">□ {% trans "L3 Confidence" %}</span><span class="rio-lv" id="rioL3">: —</span></div>
+              </div>
+              <div class="rio-prob">
+                <div class="rio-prob-title">— {% trans "Probabilitas" %} —</div>
+                <div class="rio-bar-row">
+                  <span class="rio-bl">{% trans "Tear" %}</span>
+                  <span class="rio-bv" id="rioPTear">0.000</span>
+                  <div class="rio-bar-bg"><div class="rio-bar-fill" id="rioPTearBar" style="width:0%"></div></div>
+                </div>
+                <div class="rio-bar-row">
+                  <span class="rio-bl">{% trans "cracked" %}</span>
+                  <span class="rio-bv" id="rioPCracked">0.000</span>
+                  <div class="rio-bar-bg"><div class="rio-bar-fill rio-bar-hi" id="rioPCrackedBar" style="width:0%"></div></div>
+                </div>
+                <div class="rio-bar-row">
+                  <span class="rio-bl">{% trans "normal" %}</span>
+                  <span class="rio-bv" id="rioPNormal">0.000</span>
+                  <div class="rio-bar-bg"><div class="rio-bar-fill" id="rioPNormalBar" style="width:0%"></div></div>
+                </div>
+              </div>
+              <button class="rio-zoom-btn" onclick="openZoom()" title="Zoom">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+            </div><!-- /result-inline-overlay -->
+          </div><!-- /rarea -->
+
+          <div class="ccf">
+            <span class="ctag" id="countTag">0 {% trans "analisis" %}</span>
+            <div class="result-badge" id="resultBadge" style="display:none"></div>
+            <button class="btn btn-g" onclick="clearResult()">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              {% trans "Hapus" %}
+            </button>
+            <button id="downloadBtn" class="btn btn-ok" onclick="downloadResultWithOverlay()">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              {% trans "Unduh" %}
+            </button>
+          </div>
+        </div><!-- /cc result -->
+
+      </div><!-- /cg -->
+
+      <!-- Thumbnail strip -->
+      <div class="ts">
+        <div class="sh">
+          <span class="st">{% trans "Foto Diambil" %}</span>
+          <span style="font-size:12px;color:var(--muted)" id="thumbCount">0</span>
+        </div>
+        <div id="thumbEmpty" class="tph">{% trans "Foto yang diambil akan muncul di sini" %}</div>
+        <div class="tstrip" id="tstrip" style="display:none"></div>
+      </div>
+
+      <!-- PLT Section -->
+      <div class="hs">
+        <div class="hh">
+          <span class="ht">{% trans "Analisis PLT (Kepercayaan Model / Akurasi)" %}</span>
+          <button class="plt-download-btn" onclick="downloadPLT()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            {% trans "Unduh" %}
+          </button>
+        </div>
+
+        <div class="plt-card" id="pltCard">
+
+          <div class="plt-header" id="pltHeader">
+            <div class="plt-title-row">
+              <span class="plt-icon">□</span>
+              <span class="plt-main-title">BAN — <span id="pltCondLabel">—</span> (<span id="pltConfPct">—</span>%)</span>
+            </div>
+            <div class="plt-grayscale-label">Grayscale + CLAHE</div>
+          </div>
+
+          <div class="plt-body">
+            <!-- Image col -->
+            <div class="plt-img-col">
+              <div class="plt-img-wrap">
+                <img id="pltImg" src="" alt="PLT" style="display:none">
+                <div class="plt-img-empty" id="pltImgEmpty">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <span>{% trans "Belum ada analisis" %}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Info col -->
+            <div class="plt-info-col">
+              <div class="plt-detected-row">
+                <span class="plt-det-icon">□</span>
+                <span class="plt-det-label" id="pltDetLabel">TERDETEKSI SEBAGAI BAN</span>
+              </div>
+
+              <div class="plt-kelas-row">
+                <div class="plt-kv">
+                  <span class="plt-kk">Kelas</span>
+                  <span class="plt-sep-colon">:</span>
+                  <strong class="plt-kval" id="pltClass">—</strong>
+                </div>
+                <div class="plt-kv">
+                  <span class="plt-kk">Confidence</span>
+                  <span class="plt-sep-colon">:</span>
+                  <strong class="plt-kval" id="pltConfidence">—</strong>%
+                </div>
+              </div>
+
+              <div class="plt-layers-section">
+                <div class="plt-sec-title">— Detail Layer —</div>
+                <div class="plt-lr"><span class="plt-li">□</span><span class="plt-lk">L1 Heuristik</span><span class="plt-lv" id="pltL1">: —</span></div>
+                <div class="plt-lr"><span class="plt-li">□</span><span class="plt-lk">L2 OC-SVM</span><span class="plt-lv" id="pltL2">: —</span></div>
+                <div class="plt-lr"><span class="plt-li">□</span><span class="plt-lk">L3 Confidence</span><span class="plt-lv" id="pltL3">: —</span></div>
+              </div>
+
+              <div class="plt-prob-section">
+                <div class="plt-sec-title">— Probabilitas —</div>
+                <div class="plt-pb">
+                  <span class="plt-pbl">Tear</span>
+                  <span class="plt-pbv" id="pltTear">0.000</span>
+                  <div class="plt-pbb"><div class="plt-pbf" id="pltTearBar" style="width:0%"></div></div>
+                </div>
+                <div class="plt-pb">
+                  <span class="plt-pbl">cracked</span>
+                  <span class="plt-pbv" id="pltCracked">0.000</span>
+                  <div class="plt-pbb"><div class="plt-pbf plt-pbf-hi" id="pltCrackedBar" style="width:0%"></div></div>
+                </div>
+                <div class="plt-pb">
+                  <span class="plt-pbl">normal</span>
+                  <span class="plt-pbv" id="pltNormal">0.000</span>
+                  <div class="plt-pbb"><div class="plt-pbf" id="pltNormalBar" style="width:0%"></div></div>
+                </div>
+              </div>
+
+              <div class="plt-metrics-row">
+                <div class="plt-mb">
+                  <span class="plt-ml">{% trans "Akurasi Model" %}</span>
+                  <strong class="plt-mv" id="pltModelAcc">{% if model_accuracy %}{{ model_accuracy }}{% else %}—{% endif %}%</strong>
+                  <p class="plt-ms">{% trans "Berdasarkan metadata training" %}</p>
+                </div>
+                <div class="plt-mb">
+                  <span class="plt-ml">{% trans "Kelayakan Ban" %}</span>
+                  <strong class="plt-mv" id="pltTireAge">—</strong>
+                  <p class="plt-ms">{% trans "Umur > 3 tahun: ganti ban" %}</p>
+                </div>
+                <div class="plt-mb">
+                  <span class="plt-ml">{% trans "Conf. Prediksi" %}</span>
+                  <strong class="plt-mv" id="pltLatestConf">{% if latest_analysis %}{{ latest_analysis.confidence_percent }}{% else %}—{% endif %}%</strong>
+                  <p class="plt-ms">{% trans "Confidence prediksi terbaru" %}</p>
+                </div>
+              </div>
+            </div><!-- /plt-info-col -->
+          </div><!-- /plt-body -->
+
+          <!-- Chart section -->
+          <div class="plt-chart-col">
+            <div class="plt-chart-header">
+              <span class="plt-chart-title">— Analisis Keyakinan Model —</span>
+              <div class="plt-tab-row" id="pltTabRow">
+                <button class="plt-tab active" onclick="pltSwitchChart('radar',this)">Radar</button>
+                <button class="plt-tab" onclick="pltSwitchChart('bar',this)">Bar</button>
+                <button class="plt-tab" onclick="pltSwitchChart('calibration',this)">Calibration</button>
+              </div>
+            </div>
+            <div class="plt-chart-wrap">
+              <canvas id="pltChart"></canvas>
+            </div>
+            <div class="plt-chart-caption" id="pltChartCaption">Confidence per kelas — semakin lebar = semakin yakin model</div>
+          </div>
+
+        </div><!-- /plt-card -->
+      </div><!-- /hs -->
+
+    </div><!-- /content -->
+  </main><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ════════════════════════════════════════════
+     ZOOM MODAL
+     ════════════════════════════════════════════ -->
+<div class="zoom-modal" id="zoomModal" style="display:none" onclick="closeZoom()">
+  <div class="zoom-inner" onclick="event.stopPropagation()">
+    <button class="zoom-close" onclick="closeZoom()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="zoom-img-wrap" id="zoomImgWrap">
+      <img id="zoomImg" src="" alt="Zoom" style="transform-origin:center;transition:transform .2s ease">
+    </div>
+    <div class="zoom-controls">
+      <button onclick="zoomIn()"    title="Zoom In">  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+      <button onclick="zoomOut()"   title="Zoom Out"> <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+      <button onclick="zoomReset()" title="Reset">    <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     FAB GROUP
+     ════════════════════════════════════════════ -->
+<div class="fab-wrap">
+  <div class="fab-it">
+    <span class="flbl">{% trans "Kirim Pengaduan" %}</span>
+    <button class="fab fab-r" onclick="openR()">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </button>
+  </div>
+  <div class="fab-it">
+    <span class="flbl">{% trans "Chatbot Bantuan" %}</span>
+    <button class="fab fab-c" onclick="openC()">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAT PANEL
+     ════════════════════════════════════════════ -->
+<div class="panel" id="cp">
+  <div class="ph">
+    <div class="pic" style="background:var(--navy-mid)">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    </div>
+    <span class="pt">{% trans "Chatbot Bantuan" %}</span>
+    <button class="px" onclick="closeAll()">&times;</button>
+  </div>
+  <div class="cmsg" id="cm">
+    <div class="msg mb">{% trans "Halo! Saya asisten DeteksiBan. Ada yang bisa saya bantu seputar analisis ban Anda?" %}</div>
+  </div>
+  <div class="cin">
+    <input type="text" id="ci" placeholder="{% trans 'Ketik pesan...' %}" onkeydown="if(event.key==='Enter')sendMsg()">
+    <button onclick="sendMsg()">{% trans "Kirim" %}</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     REPORT PANEL
+     ════════════════════════════════════════════ -->
+<div class="panel" id="rp">
+  <div class="ph">
+    <div class="pic" style="background:var(--red-deep)">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <span class="pt">{% trans "Kirim Pengaduan" %}</span>
+    <button class="px" onclick="closeAll()">&times;</button>
+  </div>
+
+  <div class="rf" id="rff">
+    <div class="rg">
+      <label class="rl">{% trans "Kategori Masalah" %}</label>
+      <select class="rs" id="rCat">
+        <option value="">— {% trans "Pilih kategori" %} —</option>
+        <option>{% trans "Analisis tidak akurat" %}</option>
+        <option>{% trans "Kamera tidak berfungsi" %}</option>
+        <option>{% trans "Masalah akun / login" %}</option>
+        <option>{% trans "Performa lambat" %}</option>
+        <option>{% trans "Lainnya" %}</option>
+      </select>
+    </div>
+    <div class="rg">
+      <label class="rl">{% trans "Email Anda" %}</label>
+      <input class="ri" type="email" id="rEmail" placeholder="{{ user.email|default:'email@contoh.com' }}">
+    </div>
+    <div class="rg">
+      <label class="rl">{% trans "Deskripsi Masalah" %}</label>
+      <textarea class="rt" id="rDesc" placeholder="{% trans 'Jelaskan masalah yang Anda alami...' %}"></textarea>
+    </div>
+    <button class="rsub" id="reportBtn" onclick="submitReport()">{% trans "Kirim Pengaduan" %}</button>
+  </div>
+
+  <div class="report-spinner" id="reportSpinner" style="display:none;text-align:center;padding:2rem">
+    <div class="spinner-grow text-primary" style="width:3rem;height:3rem" role="status">
+      <span class="visually-hidden">{% trans "Mengirim..." %}</span>
+    </div>
+    <p style="margin-top:1rem;color:var(--muted)">{% trans "Mengirim pengaduan..." %}</p>
+  </div>
+
+  <div class="rok" id="rok">
+    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <strong>{% trans "Pengaduan Terkirim!" %}</strong>
+    <p>{% trans "Tim kami akan menghubungi Anda dalam 1×24 jam." %}</p>
+  </div>
+</div>
+
+<!-- Dynamic JS variables injected from Django -->
+<script>
+  window.ANALYZE_URL = "{% url 'analyze_api' %}";
+  window.DELETE_ROW_BASE = "{% url 'delete_analysis' pk=0 %}".replace('/0/', '/');
+  window.CLEAR_HISTORY_URL = "{% url 'clear_history' %}";
+  window.SET_LANG_URL = "{% url 'set_language' %}";
+  window.REPORT_URL = "{% url 'submit_report' %}";
+  window.CSRF_TOKEN = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+  window.IS_AUTHENTICATED = {% if user.is_authenticated %}true{% else %}false{% endif %};
+  window.LABELS = {
+    good: "{% trans 'Baik' %}",
+    worn: "{% trans 'Aus' %}",
+    damaged: "{% trans 'Rusak' %}",
+    unknown: "{% trans 'Tidak Diketahui' %}",
+    not_tire: "{% trans 'Bukan Ban' %}",
+    cracked: "CRACKED",
+    tear: "TEAR",
+    normal: "NORMAL",
+    detected: "{% trans 'TERDETEKSI SEBAGAI BAN' %}",
+    notDetected: "{% trans 'BUKAN BAN' %}",
+    banLabel: "{% trans 'BAN —' %}",
+  };
+  window.TXT = {
+    on: "{% trans 'Menyala' %}",
+    off: "{% trans 'Matikan' %}",
+    retry: "{% trans 'Coba Lagi' %}",
+    analyses: "{% trans 'analisis' %}",
+    front: "{% trans 'Depan' %}",
+    rear: "{% trans 'Belakang' %}",
+    camErr: "{% trans 'Gagal akses kamera' %}",
+    captured: "{% trans 'Foto diambil!' %}",
+    analyzing: "{% trans 'Menganalisis...' %}",
+    done: "{% trans 'Analisis selesai' %}",
+    noImg: "{% trans 'Tidak ada gambar untuk diunduh' %}",
+    cleared: "{% trans 'Riwayat dihapus' %}",
+    deleted: "{% trans 'Analisis dihapus' %}",
+    reportOk: "{% trans 'Pengaduan terkirim!' %}",
+    typeMsg: "{% trans 'Ketik pesan terlebih dahulu' %}",
+    enterYear: "{% trans 'Masukkan tahun ban untuk melihat kelayakan' %}",
+    replaceNow: "{% trans 'Ban harus diganti' %}",
+    stillGood: "{% trans 'Ban masih layak' %}",
+    years: "{% trans 'tahun' %}",
+    notTireMsg: "{% trans 'Gambar yang diupload bukan ban. Silakan ambil foto ban yang jelas.' %}",
+    loading: "{% trans 'Menyiapkan...' %}",
+    installed: "{% trans 'Dipasang' %}",
+    appDownloading: "{% trans 'Aplikasi akan diunduh...' %}",
+    cancelled: "{% trans 'Dibatalkan' %}",
+    installCancelled: "{% trans 'Pemasangan dibatalkan' %}",
+    failed: "{% trans 'Gagal' %}",
+    installFailed: "{% trans 'Gagal menampilkan prompt install' %}",
+  };
+</script>
+<script src="{% static 'analysis/js/camera.js' %}"></script>
+<script src="{% static 'analysis/js/dashboard.js' %}"></script>
+
+{% endblock %}

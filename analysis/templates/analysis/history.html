@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load i18n static avatar_tags %}
+
+{% block title %}{% trans "Riwayat Analisis" %} — DeteksiBan{% endblock %}
+
+{% block head_extras %}
+<link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'analysis/css/dashboard.css' %}">
+<style>
+  .filter-bar {
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px 18px;
+  }
+  .filter-bar select, .filter-bar input {
+    padding:8px 12px; border-radius:8px;
+    background:rgba(255,255,255,.06); border:1px solid var(--border);
+    color:var(--text); font-size:13px; outline:none;
+  }
+  .filter-bar select:focus, .filter-bar input:focus { border-color:var(--acc); }
+  .filter-bar select option { background:var(--bg3); }
+  .empty-state {
+    text-align:center; padding:60px 20px; color:var(--muted);
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+  }
+  .empty-state svg { width:48px; height:48px; stroke:currentColor; fill:none; stroke-width:1.5; opacity:.3; }
+  .stat-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  @media(max-width:640px) { .stat-cards { grid-template-columns:1fr 1fr; } }
+  
+  @keyframes fadeOut {
+    from { opacity: 0.6; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(20px); }
+  }
+</style>
+<script src="{% static 'analysis/js/camera.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+{% csrf_token %}
+<div class="shell">
+  <div class="ov" id="ov" onclick="closeSB()"></div>
+
+  <!-- Sidebar (reused) -->
+  <aside class="sb" id="sb">
+    <div class="sb-top"><div class="brand"><span class="bdot"></span>DeteksiBan</div></div>
+    <div class="sb-prof">
+      <div class="av-w">
+        <div class="av-c">
+          <span>{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+          <img alt="av"{% if user.profile.avatar and user.profile|avatar_exists %} src="{{ user.profile.avatar.url }}" style="display:block"{% endif %} onerror="this.style.display='none'">
+        </div>
+        <div class="av-dot"></div>
+      </div>
+      <div class="sb-name">{{ user.get_full_name|default:user.username }}</div>
+      <div class="sb-role">{% trans "Pengguna Aktif" %}</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="ng">{% trans "Menu Utama" %}</div>
+      <a href="{% url 'dashboard' %}" class="ni">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        {% trans "Dashboard Kamera" %}
+      </a>
+      <a href="{% url 'history' %}" class="ni act">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        {% trans "Riwayat Analisis" %}
+      </a>
+      <a href="{% url 'detail' %}" class="ni">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {% trans "Detail Analisis" %}
+      </a>
+      <div class="ng">{% trans "Akun" %}</div>
+      <a href="{% url 'delete_account' %}" class="ni ni-d">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        {% trans "Hapus Akun" %}
+      </a>
+      <a href="{% url 'logout' %}" class="ni">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        {% trans "Keluar" %}
+      </a>
+    </nav>
+    <div class="sb-ft">
+      <div class="llbl">{% trans "Bahasa" %}</div>
+      <div class="lpills">
+        {% get_current_language as current_lang %}
+        <button type="button" class="lp {% if current_lang == 'id' %}act{% endif %}" onclick="switchLang('id')">🇮🇩 Indonesia</button>
+        <button type="button" class="lp {% if current_lang == 'en' %}act{% endif %}" onclick="switchLang('en')">🇬🇧 English</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main" id="mn">
+    <div class="topbar">
+      <div class="pg-info">
+        <div class="pg-t">{% trans "Riwayat Analisis" %}</div>
+        <div class="pg-s">{% trans "Semua hasil analisis ban Anda" %}</div>
+      </div>
+      <div class="tb-right">
+        <div class="chips">
+          {% get_current_language as current_lang %}
+          <button type="button" class="chip {% if current_lang == 'id' %}act{% endif %}" onclick="switchLang('id')">ID</button>
+          <button type="button" class="chip {% if current_lang == 'en' %}act{% endif %}" onclick="switchLang('en')">EN</button>
+        </div>
+        <button class="tog" onclick="togSB()">
+          <div class="tog-bar"></div>
+          <div class="tog-bar" style="width:10px;margin-right:4px"></div>
+          <div class="tog-bar"></div>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stat-cards">
+        {% with total=analyses.count %}
+        <div class="sc"><div class="slbl">{% trans "Total" %}</div><div class="sval a">{{ total }}</div></div>
+        {% endwith %}
+        <div class="sc">
+          <div class="slbl">{% trans "Kondisi Baik" %}</div>
+          <div class="sval" style="color:var(--ok)">{{ analyses|length }}</div>
+        </div>
+        <div class="sc">
+          <div class="slbl">{% trans "Perlu Perhatian" %}</div>
+          <div class="sval" style="color:var(--warn)">—</div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span style="font-size:13px;font-weight:600;color:var(--muted)">{% trans "Filter:" %}</span>
+        <select id="filterCond" onchange="filterTable()">
+          <option value="">{% trans "Semua Kondisi" %}</option>
+          <option value="good">{% trans "Baik" %}</option>
+          <option value="worn">{% trans "Aus" %}</option>
+          <option value="damaged">{% trans "Rusak" %}</option>
+          <option value="unknown">{% trans "Tidak Diketahui" %}</option>
+        </select>
+        <input type="text" id="filterSearch" placeholder="{% trans 'Cari label...' %}" oninput="filterTable()">
+        <button class="btn btn-ghost" id="resetFilterBtn" onclick="clearFilters()" style="margin-left:auto">{% trans "Reset" %}</button>
+      </div>
+
+      <!-- Table -->
+      <div class="hs">
+        <div class="hh">
+          <span class="ht">{% trans "Semua Riwayat" %}</span>
+          <button class="hcl" onclick="clearAll()">{% trans "Hapus semua" %}</button>
+        </div>
+        {% if analyses %}
+        <table class="htable" id="histTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Foto" %}</th>
+              <th>{% trans "Kondisi" %}</th>
+              <th>{% trans "Label" %}</th>
+              <th>{% trans "Kepercayaan" %}</th>
+              <th>{% trans "Tahun Ban" %}</th>
+              <th>{% trans "Mode" %}</th>
+              <th>{% trans "Waktu" %}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in analyses %}
+            <tr id="row-{{ a.pk }}" data-cond="{{ a.condition }}" data-label="{{ a.label|lower }}">
+              <td style="color:var(--muted);font-size:12px">{{ forloop.counter }}</td>
+              <td>
+                {% if a.image %}
+                <a href="{% url 'detail' %}?id={{ a.pk }}">
+                  <img src="{{ a.image.url }}" style="width:54px;height:40px;object-fit:cover;border-radius:7px;display:block;transition:.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+                </a>
+                {% else %}—{% endif %}
+              </td>
+              <td>
+                <span class="cond-badge cond-{{ a.condition }}">{{ a.get_condition_display }}</span>
+              </td>
+              <td style="color:var(--muted)">{{ a.label|default:"—" }}</td>
+              <td>
+                <div style="font-size:12px;font-weight:600">{{ a.confidence_percent }}%</div>
+                <div class="conf-bar"><div class="conf-fill" style="width:{{ a.confidence_percent }}%"></div></div>
+              </td>
+              <td style="color:var(--muted)">{{ a.tire_year|default:"—" }}</td>
+              <td style="color:var(--muted);font-size:12px">{{ a.get_camera_mode_display }}</td>
+              <td style="color:var(--muted);font-size:12px;white-space:nowrap">{{ a.created_at|date:"d M Y H:i" }}</td>
+              <td>
+                <button class="del-btn" onclick="deleteRow({{ a.pk }})">
+                  <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <p>{% trans "Belum ada riwayat. Mulai analisis dari dashboard." %}</p>
+          <a href="{% url 'dashboard' %}" class="btn btn-p" style="text-decoration:none">{% trans "Ke Dashboard" %}</a>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const CSRF_TOKEN       = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || "";
+const DELETE_ROW_BASE  = "{% url 'delete_analysis' pk=0 %}".replace('/0/', '/');
+const CLEAR_HISTORY_URL= "{% url 'clear_history' %}";
+const SET_LANG_URL     = "{% url 'set_language' %}";
+
+function filterTable() {
+  const cond = document.getElementById('filterCond').value;
+  const q    = document.getElementById('filterSearch').value.toLowerCase();
+  document.querySelectorAll('#histTable tbody tr').forEach(tr => {
+    const matchCond  = !cond || tr.dataset.cond === cond;
+    const matchLabel = !q    || tr.dataset.label.includes(q);
+    tr.style.display = matchCond && matchLabel ? '' : 'none';
+  });
+}
+
+function clearFilters() {
+  const btn = document.getElementById('resetFilterBtn');
+  const stateMgr = new ButtonStateManager(btn);
+  stateMgr.setLoading('{% trans "Mereset..." %}');
+  document.getElementById('filterCond').value = '';
+  document.getElementById('filterSearch').value = '';
+  filterTable();
+  setTimeout(() => {
+    stateMgr.setSuccess('{% trans "Direset" %}', 800);
+  }, 200);
+}
+
+async function deleteRow(pk) {
+  if (!confirm('Hapus analisis ini?')) return;
+  const btn = event.target.closest('.del-btn');
+  const row = document.getElementById(`row-${pk}`);
+  
+  if (!btn || !row) return;
+  
+  const stateMgr = new ButtonStateManager(btn);
+  const originalRow = row.cloneNode(true);
+  
+  // Optimistic UI: Disable row interaction
+  row.style.opacity = '0.6';
+  row.style.pointerEvents = 'none';
+  stateMgr.setLoading();
+  
+  try {
+    const resp = await fetch(`${DELETE_ROW_BASE}${pk}/`, {
+      method: 'POST', headers: { 'X-CSRFToken': CSRF_TOKEN }
+    });
+    
+    if (resp.ok) {
+      // Animate fade out
+      row.style.animation = 'fadeOut 0.4s ease-out';
+      setTimeout(() => row?.remove(), 400);
+      
+      stateMgr.setSuccess('✓', 1200);
+      showToast('Analisis dihapus', 'success');
+      
+      if (typeof clearAllImageData === 'function') {
+        clearAllImageData();
+      }
+    } else {
+      throw new Error('Failed to delete');
+    }
+  } catch (err) {
+    // Restore on error
+    if (row.parentNode) {
+      row.replaceWith(originalRow);
+    }
+    stateMgr.setError('✗', 1500);
+    showToast('Gagal menghapus analisis', 'error');
+  }
+}
+
+async function clearAll() {
+  if (!confirm('Hapus semua riwayat?')) return;
+  const btn = event.target.closest('.hcl');
+  const table = document.getElementById('histTable');
+  
+  if (!btn || !table) return;
+  
+  const stateMgr = new ButtonStateManager(btn);
+  const rows = Array.from(table.querySelectorAll('tbody tr'));
+  const backupRows = rows.map(r => r.cloneNode(true));
+  
+  rows.forEach(row => {
+    row.style.animation = 'fadeOut 0.4s ease-out';
+  });
+  
+  stateMgr.setLoading();
+  
+  try {
+    const resp = await fetch(CLEAR_HISTORY_URL, {
+      method: 'POST', headers: { 'X-CSRFToken': CSRF_TOKEN }
+    });
+    
+    if (resp.ok) {
+      setTimeout(() => {
+        rows.forEach(r => r?.remove());
+      }, 400);
+      
+      stateMgr.setSuccess('✓', 1200);
+      showToast('Riwayat dihapus dan data dibersihkan', 'success');
+      
+      if (typeof clearAllImageData === 'function') {
+        clearAllImageData();
+      }
+      if (typeof Storage !== 'undefined') {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.includes('tirescan') || key.includes('analysis') || key.includes('camera'))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+      }
+      
+      setTimeout(() => location.reload(), 800);
+    } else {
+      throw new Error('Failed to clear');
+    }
+  } catch (err) {
+    rows.forEach(r => r?.remove());
+    backupRows.forEach(bRow => {
+      if (table.querySelector('tbody')) {
+        table.querySelector('tbody').appendChild(bRow);
+      }
+    });
+    stateMgr.setError('✗', 1500);
+    showToast('Gagal menghapus riwayat', 'error');
+  }
+}
+
+function togSB() {
+  document.getElementById('sb').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('open');
+}
+function closeSB() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+function doSwitchLang(lang) {
+  fetch(SET_LANG_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF_TOKEN },
+    body: `language=${lang}`
+  }).then(() => location.reload());
+}
+
+// Initialize - clear any leftover image data on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // If no analyses exist, ensure all image data is cleared
+  const hasAnalyses = document.querySelectorAll('#histTable tbody tr').length > 0;
+  if (!hasAnalyses && typeof clearAllImageData === 'function') {
+    clearAllImageData();
+  }
+});
+</script>
+{% endblock %}
