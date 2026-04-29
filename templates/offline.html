@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Offline" %} — DeteksiBan{% endblock %}
+
+{% block head_extras %}
+<link rel="stylesheet" href="{% static 'analysis/css/dashboard.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <div class="auth-brand-dot"></div>
+      <span class="auth-brand-name">DeteksiBan</span>
+    </div>
+
+    <h1 class="auth-title">{% trans "Offline" %}</h1>
+    <p class="auth-sub">{% trans "Anda sedang offline. Beberapa fitur mungkin tidak tersedia." %}</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--muted);">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+        <path d="M12 6v6l4 2"/>
+        <circle cx="12" cy="12" r="1"/>
+      </svg>
+    </div>
+
+    <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">
+      {% trans "Coba periksa koneksi internet Anda dan refresh halaman." %}
+    </p>
+
+    <button onclick="location.reload()" class="btn-auth" style="margin-bottom: 10px;">
+      {% trans "Refresh Halaman" %}
+    </button>
+
+    <p class="auth-switch">
+      <a href="#" onclick="window.history.back()">{% trans "Kembali" %}</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}

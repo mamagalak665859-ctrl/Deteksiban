@@ -4,7 +4,6 @@
 {% block title %}{% trans "Dashboard" %} — DeteksiBan AI{% endblock %}
 
 {% block head_extras %}
-  <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'analysis/css/dashboard.css' %}">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 {% endblock %}
@@ -184,6 +183,14 @@
         <div class="pg-s"></div>
       </div>
       <div class="tb-right">
+        <div id="offline-indicator" class="offline-indicator" style="display:none">
+          <svg viewBox="0 0 24 24" width="16" height="16" style="stroke:currentColor;fill:none;stroke-width:2;margin-right:4px">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+            <path d="M12 6v6l4 2"/>
+            <circle cx="12" cy="12" r="1"/>
+          </svg>
+          {% trans "Offline" %}
+        </div>
         <div class="chips">
           {% get_current_language as current_lang %}
           <button type="button" class="chip {% if current_lang == 'id' %}act{% endif %}" onclick="switchLang('id')">ID</button>
@@ -315,7 +322,7 @@
             {% if user.is_authenticated %}
               <button id="btnToggleCam" class="btn btn-dr" onclick="toggleCamera()">
                 <svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 01-2-2V8"/></svg>
-                <span id="toggleCamLabel">{% trans "Matikan" %}</span>
+                <span id="toggleCamLabel">{% trans "Menyala" %}</span>
               </button>
               <button id="uploadBtn" class="btn btn-ghost" onclick="document.getElementById('uploadInput').click()">
                 <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 5 17 10"/><line x1="12" y1="5" x2="12" y2="15"/></svg>
@@ -582,23 +589,6 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     FAB GROUP
-     ════════════════════════════════════════════ -->
-<div class="fab-wrap">
-  <div class="fab-it">
-    <span class="flbl">{% trans "Kirim Pengaduan" %}</span>
-    <button class="fab fab-r" onclick="openR()">
-      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </button>
-  </div>
-  <div class="fab-it">
-    <span class="flbl">{% trans "Chatbot Bantuan" %}</span>
-    <button class="fab fab-c" onclick="openC()">
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    </button>
-  </div>
-</div>
 
 <!-- ════════════════════════════════════════════
      CHAT PANEL

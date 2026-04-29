@@ -44,11 +44,75 @@ const retryBtn    = () => document.getElementById('retryBtn');
 const toggleBtn   = () => document.getElementById('btnToggleCam');
 const toggleLbl   = () => document.getElementById('toggleCamLabel');
 
+function renderToggleButton(isOn) {
+  const btn = toggleBtn();
+  if (!btn) return;
+  const label = isOn ? TXT.off : TXT.on;
+  btn.innerHTML = `
+    <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2">
+      ${isOn ? '<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>' : '<line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 01-2-2V8"/>'}
+    </svg>${label}`;
+}
+
+function getActiveStream() {
+  if (stream instanceof MediaStream) return stream;
+  const v = video();
+  if (v && v.srcObject instanceof MediaStream) return v.srcObject;
+  return null;
+}
+
+function isStreamActive(ms) {
+  if (!ms) return false;
+  return ms.getTracks().some(track => track.readyState === 'live' && track.enabled);
+}
+
+function stopCamera() {
+  const activeStream = getActiveStream();
+  const streamInfo = activeStream ? activeStream.getTracks().map(t => ({kind:t.kind, enabled:t.enabled, readyState:t.readyState})) : null;
+  console.error('stopCamera debug:', {cameraOn, stream: !!stream, activeStream: !!activeStream, streamInfo});
+  if (!activeStream) {
+    console.warn('stopCamera: no active stream to stop');
+    return false;
+  }
+
+  try {
+    activeStream.getTracks().forEach(track => {
+      try {
+        track.stop();
+      } catch (err) {
+        console.warn('stopCamera: failed to stop track', err);
+      }
+    });
+  } catch (err) {
+    console.error('stopCamera: error stopping stream tracks', err);
+    return false;
+  }
+
+  try {
+    const v = video();
+    if (v) {
+      v.pause();
+      v.srcObject = null;
+      v.removeAttribute('src');
+      v.load();
+      v.style.display = 'none';
+    }
+  } catch (err) {
+    console.warn('stopCamera: failed to clear video srcObject', err);
+  }
+
+  stream = null;
+  cameraOn = false;
+  return true;
+}
+
 // ── Start camera ──────────────────────────────────────────────
 async function startCamera() {
+  console.error('startCamera debug:', {cameraOn, streamExists: !!stream});
+  statusText().textContent = 'Debug: starting camera...';
   setStatus('starting');
   try {
-    if (stream) { stream.getTracks().forEach(t => t.stop()); }
+    if (stream) stopCamera();
 
     stream = await navigator.mediaDevices.getUserMedia({
       video: {
@@ -72,11 +136,8 @@ async function startCamera() {
     };
 
     setStatus('live');
-    toggleBtn().innerHTML = `
-      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2">
-        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>${TXT.off}`;
+    cameraOn = true;
+    renderToggleButton(true);
     retryBtn().style.display = 'none';
 
   } catch (err) {
@@ -89,28 +150,42 @@ async function startCamera() {
     noCamMsg().textContent = TXT.camErr + ': ' + (err.message || err.name);
     setStatus('error');
     retryBtn().style.display = 'inline-flex';
+    renderToggleButton(false);
+    cameraOn = false;
   }
 }
 
 // ── Toggle camera on/off ──────────────────────────────────────
 function toggleCamera() {
-  const btn = document.getElementById('toggleBtn');
+  const btn = toggleBtn();
   if (!btn) return;
 
-  if (cameraOn) {
-    if (stream) { stream.getTracks().forEach(t => t.stop()); }
-    stream   = null;
-    cameraOn = false;
-    video().style.display       = 'none';
+  const activeStream = getActiveStream();
+  const active = cameraOn || isStreamActive(activeStream);
+  console.error('toggleCamera debug:', {cameraOn, stream: !!stream, activeStream: !!activeStream, active});
+  statusText().textContent = `Debug: toggleCamera active=${active}`;
+  if (active) {
+    if (!stopCamera()) {
+      console.error('toggleCamera: failed to stop active stream');
+      statusText().textContent = 'Debug: failed to stop active stream';
+    } else {
+      statusText().textContent = 'Debug: stopCamera success';
+    }
+    const v = video();
+    if (v) {
+      v.style.display = 'none';
+    }
     noCamState().style.display  = 'none';
     camOffState().style.display = 'flex';
     setStatus('off');
-    toggleBtn().innerHTML = `
-      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2">
-        <line x1="1" y1="1" x2="23" y2="23"/>
-        <path d="M21 21H3a2 2 0 01-2-2V8"/>
-      </svg>${TXT.on}`;
+    renderToggleButton(false);
   } else {
+    if (activeStream) {
+      const staleInfo = activeStream.getTracks().map(t => ({kind:t.kind, enabled:t.enabled, readyState:t.readyState}));
+      console.error('toggleCamera: activeStream exists while cameraOn is false, stopping stale stream', staleInfo);
+      statusText().textContent = 'Debug: stale stream detected, stopping it';
+      stopCamera();
+    }
     const stateMgr = new ButtonStateManager(btn);
     stateMgr.setLoading('Mengakses kamera...');
     startCamera().then(() => {
@@ -118,6 +193,8 @@ function toggleCamera() {
     }).catch(err => {
       stateMgr.setError('Gagal mengakses kamera', 2000);
       console.error('Camera start error:', err);
+      renderToggleButton(false);
+      cameraOn = false;
     });
   }
 }

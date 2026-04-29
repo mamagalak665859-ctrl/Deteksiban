@@ -8,18 +8,18 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <form id="csrf-form" style="display:none">{% csrf_token %}</form>
   <link rel="manifest" href="/manifest.json">
   <title>{% block title %}DeteksiBan AI{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'analysis/css/dashboard.css' %}">
   {% block head_extras %}{% endblock %}
 </head>
 <body>
   {% block body %}{% endblock %}
 
   <div id="toast-container"></div>
+  <form id="csrf-form" style="display:none">{% csrf_token %}</form>
 
   <script>
     // ── Button State Manager ─────────────────────────────────────
@@ -135,8 +135,33 @@
         });
       });
     }
-    window.switchLang = switchLang;
-    window.doSwitchLang = switchLang;
+    // ── Offline/Online Detection ───────────────────────────────────
+    function updateOfflineIndicator() {
+      const indicator = document.getElementById('offline-indicator');
+      if (indicator) {
+        indicator.style.display = navigator.onLine ? 'none' : 'flex';
+      }
+    }
+
+    window.addEventListener('online', function() {
+      showToast('Koneksi internet tersambung kembali', 'success');
+      updateOfflineIndicator();
+      // Refresh page if user was on offline page
+      if (window.location.pathname === '/offline/') {
+        setTimeout(() => location.reload(), 1000);
+      }
+    });
+
+    window.addEventListener('offline', function() {
+      showToast('Koneksi internet terputus', 'warning');
+      updateOfflineIndicator();
+    });
+
+    // Check initial connection status
+    updateOfflineIndicator();
+    if (!navigator.onLine) {
+      showToast('Anda sedang offline', 'warning');
+    }
   </script>
   {% block scripts %}{% endblock %}
   <script>

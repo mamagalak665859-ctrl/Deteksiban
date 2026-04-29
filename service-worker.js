@@ -1,10 +1,10 @@
 // TireScan Service Worker
-// Strategy: network-first for HTML/API, cache-first for static assets only.
-// This prevents ERR_FAILED when the dev server restarts.
+// Strategy: cache-first for static assets, network-first for HTML with offline fallback.
+// Supports offline usage for cached pages.
 
-const CACHE_NAME = 'tirescan-v3';
+const CACHE_NAME = 'tirescan-v5';
 
-// Only cache static assets — never cache HTML pages or API endpoints
+// Cache static assets and critical pages
 const STATIC_ASSETS = [
   '/static/core/css/base.css',
   '/static/core/css/auth.css',
@@ -14,13 +14,25 @@ const STATIC_ASSETS = [
   '/manifest.json',
 ];
 
-// ── Install: pre-cache static assets ─────────────────────────────
+// Cache critical HTML pages for offline access
+const CRITICAL_PAGES = [
+  '/',
+  '/login/',
+  '/register/',
+  '/dashboard/',
+  '/history/',
+  '/offline/',
+  // Note: /detail/ requires ID parameter, cached on-demand
+];
+
+// ── Install: pre-cache static assets and critical pages ────────
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
+      const allAssets = [...STATIC_ASSETS, ...CRITICAL_PAGES];
       return Promise.allSettled(
-        STATIC_ASSETS.map(url => cache.add(url).catch(() => null))
+        allAssets.map(url => cache.add(url).catch(() => null))
       );
     })
   );
@@ -75,12 +87,31 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // HTML pages: network-first, NO cache fallback
-  // If network fails, let it fail — don't serve stale HTML
+  // Critical pages: cache-first with network update
+  if (CRITICAL_PAGES.includes(url.pathname)) {
+    event.respondWith(
+      caches.match(request).then(cached => {
+        const networkFetch = fetch(request).then(res => {
+          if (res && res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put(request, clone));
+          }
+          return res;
+        });
+
+        return cached || networkFetch;
+      })
+    );
+    return;
+  }
+
+  // Other HTML pages: network-first with offline fallback
   event.respondWith(
     fetch(request).catch(() => {
-      // Only return cached version of the exact same URL if available
-      return caches.match(request);
+      // Return offline page for navigation requests
+      if (request.headers.get('accept').includes('text/html')) {
+        return caches.match('/offline/');
+      }
     })
   );
 });
