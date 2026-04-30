@@ -7,7 +7,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-&4ua(ifaqx7_r^ya*!93$
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,deteksiban.vercel.app,deteksiban-13t1psuxj-mamagalak665859-ctrls-projects.vercel.app').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,deteksiban.vercel.app,deteksiban-13t1psuxj-mamagalak665859-ctrls-projects.vercel.app,deteksiban-44hgcha0g-mamagalak665859-ctrls-projects.vercel.app').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
