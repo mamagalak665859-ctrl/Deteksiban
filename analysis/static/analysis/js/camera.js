@@ -107,6 +107,22 @@ function stopCamera() {
 }
 
 // ── Start camera ──────────────────────────────────────────────
+async function getVideoDeviceIdForFacingMode(mode) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return null;
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoInputs = devices.filter(d => d.kind === 'videoinput');
+    if (!videoInputs.length) return null;
+    if (mode === 'environment') {
+      return videoInputs.find(d => /back|rear|environment/i.test(d.label))?.deviceId || null;
+    }
+    return videoInputs.find(d => /front|user|selfie/i.test(d.label))?.deviceId || null;
+  } catch (err) {
+    console.warn('Could not enumerate video devices:', err);
+    return null;
+  }
+}
+
 async function startCamera() {
   console.error('startCamera debug:', {cameraOn, streamExists: !!stream});
   statusText().textContent = 'Debug: starting camera...';
@@ -122,13 +138,33 @@ async function startCamera() {
     };
 
     console.log('Camera constraints:', videoConstraints);
-    
+
     let stream_attempt = null;
+    if (facingMode === 'environment') {
+      const envDeviceId = await getVideoDeviceIdForFacingMode('environment');
+      if (envDeviceId) {
+        try {
+          stream_attempt = await navigator.mediaDevices.getUserMedia({
+            video: {
+              deviceId: { exact: envDeviceId },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            },
+            audio: false,
+          });
+        } catch (errEnv) {
+          console.warn('⚠️ Environment deviceId access failed, falling back to facingMode:', errEnv.name);
+        }
+      }
+    }
+
     try {
-      stream_attempt = await navigator.mediaDevices.getUserMedia({
-        video: videoConstraints,
-        audio: false,
-      });
+      if (!stream_attempt) {
+        stream_attempt = await navigator.mediaDevices.getUserMedia({
+          video: videoConstraints,
+          audio: false,
+        });
+      }
     } catch (err1) {
       console.warn('⚠️ Failed with preferred constraints, trying generic camera:', err1.name);
       // Fallback: try plain camera access
@@ -261,8 +297,10 @@ function setMode(btn, mode, label) {
   facingMode  = mode === 'rear' ? 'environment' : 'user';
   document.querySelectorAll('.cb').forEach(b => b.classList.remove('act'));
   btn.classList.add('act');
-  document.getElementById('stM').textContent = label;
-  document.getElementById('infoMode').textContent = label;
+  const stM = document.getElementById('stM');
+  if (stM) stM.textContent = label;
+  const infoModeEl = document.getElementById('infoMode');
+  if (infoModeEl) infoModeEl.textContent = label;
   if (cameraOn) startCamera();
 }
 

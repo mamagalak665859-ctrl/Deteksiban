@@ -985,24 +985,28 @@ const TXT = window.TXT || {
   /* PWA Install */
   let deferredPrompt;
   const installBtn = document.getElementById('installBtn');
+  const installBtnText = document.getElementById('installBtnText');
+
+  function updateInstallButtonText(text) {
+    if (installBtnText) installBtnText.textContent = text;
+  }
 
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     deferredPrompt = event;
-    if (installBtn) {
-      installBtn.style.display = 'flex';
-    }
+    updateInstallButtonText(TXT.installLabel || 'Pasang Aplikasi');
   });
 
   window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
-    if (installBtn) {
-      installBtn.style.display = 'none';
-    }
+    updateInstallButtonText(TXT.downloadApp || 'Unduh Aplikasi');
   });
 
-  function installApp() {
-    if (!deferredPrompt || !installBtn) return;
+  function installApp(event) {
+    if (!installBtn) return;
+    if (!deferredPrompt) return;
+    if (event && event.preventDefault) event.preventDefault();
+
     const stateMgr = new ButtonStateManager(installBtn);
     stateMgr.setLoading(TXT.loading || 'Menyiapkan...');
 
@@ -1016,10 +1020,11 @@ const TXT = window.TXT || {
         showToast(TXT.installCancelled || 'Pemasangan dibatalkan', 'warn');
       }
       deferredPrompt = null;
-      setTimeout(() => { if (installBtn) installBtn.style.display = 'none'; }, 1700);
+      updateInstallButtonText(TXT.downloadApp || 'Unduh Aplikasi');
     }).catch(err => {
       console.error('Install prompt error:', err);
       stateMgr.setError(TXT.failed || 'Gagal', 1600);
       showToast(TXT.installFailed || 'Gagal menampilkan prompt install', 'error');
+      updateInstallButtonText(TXT.downloadApp || 'Unduh Aplikasi');
     });
   }

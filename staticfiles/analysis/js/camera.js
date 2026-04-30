@@ -107,6 +107,22 @@ function stopCamera() {
 }
 
 // ── Start camera ──────────────────────────────────────────────
+async function getVideoDeviceIdForFacingMode(mode) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return null;
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoInputs = devices.filter(d => d.kind === 'videoinput');
+    if (!videoInputs.length) return null;
+    if (mode === 'environment') {
+      return videoInputs.find(d => /back|rear|environment/i.test(d.label))?.deviceId || null;
+    }
+    return videoInputs.find(d => /front|user|selfie/i.test(d.label))?.deviceId || null;
+  } catch (err) {
+    console.warn('Could not enumerate video devices:', err);
+    return null;
+  }
+}
+
 async function startCamera() {
   console.error('startCamera debug:', {cameraOn, streamExists: !!stream});
   statusText().textContent = 'Debug: starting camera...';
@@ -114,19 +130,70 @@ async function startCamera() {
   try {
     if (stream) stopCamera();
 
+    // Mobile-friendly constraints: use ideal values and avoid strict exact match
     const videoConstraints = {
       width:  { ideal: 1280 },
       height: { ideal: 720 },
       facingMode: { ideal: facingMode },
     };
 
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: videoConstraints,
-      audio: false,
+    console.log('Camera constraints:', videoConstraints);
+
+    let stream_attempt = null;
+    if (facingMode === 'environment') {
+      const envDeviceId = await getVideoDeviceIdForFacingMode('environment');
+      if (envDeviceId) {
+        try {
+          stream_attempt = await navigator.mediaDevices.getUserMedia({
+            video: {
+              deviceId: { exact: envDeviceId },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            },
+            audio: false,
+          });
+        } catch (errEnv) {
+          console.warn('⚠️ Environment deviceId access failed, falling back to facingMode:', errEnv.name);
+        }
+      }
+    }
+
+    try {
+      if (!stream_attempt) {
+        stream_attempt = await navigator.mediaDevices.getUserMedia({
+          video: videoConstraints,
+          audio: false,
+        });
+      }
+    } catch (err1) {
+      console.warn('⚠️ Failed with preferred constraints, trying generic camera:', err1.name);
+      // Fallback: try plain camera access
+      try {
+        stream_attempt = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+      } catch (err2) {
+        console.error('❌ Fallback also failed:', err2.name);
+        throw err1; // preserve original error for reporting
+      }
+    }
+    
+    stream = stream_attempt;
+
+    console.log('✅ Camera stream acquired:', {
+      videoWidth: stream.getVideoTracks()[0]?.getSettings().width,
+      videoHeight: stream.getVideoTracks()[0]?.getSettings().height,
+      facingMode: stream.getVideoTracks()[0]?.getSettings().facingMode,
     });
 
     const v = video();
     v.srcObject = stream;
+    v.muted = true;
+    v.playsInline = true;
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
+    await v.play().catch(err => console.warn('Video play warning:', err));
     v.style.display = 'block';
     noCamState().style.display  = 'none';
     camOffState().style.display = 'none';
@@ -135,6 +202,11 @@ async function startCamera() {
     v.onloadedmetadata = () => {
       const w = v.videoWidth, h = v.videoHeight;
       document.getElementById('stRes').textContent = `${w}×${h}`;
+      console.log('✅ Video metadata loaded:', {w, h});
+    };
+
+    v.onerror = (err) => {
+      console.error('❌ Video error:', err);
     };
 
     setStatus('live');
@@ -143,13 +215,31 @@ async function startCamera() {
     retryBtn().style.display = 'none';
 
   } catch (err) {
-    console.error('Camera error:', err);
+    console.error('❌ Camera error:', err);
+    console.error('   Error name:', err.name);
+    console.error('   Error message:', err.message);
+    
     cameraOn = false;
     stream   = null;
     video().style.display       = 'none';
     noCamState().style.display  = 'flex';
     camOffState().style.display = 'none';
-    noCamMsg().textContent = TXT.camErr + ': ' + (err.message || err.name);
+    
+    // Provide detailed error message
+    let errorMsg = TXT.camErr;
+    if (err.name === 'NotAllowedError') {
+      errorMsg = '📱 Izin kamera ditolak. Buka Pengaturan → izinkan akses kamera.';
+    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+      errorMsg = '📱 Kamera tidak ditemukan pada perangkat ini.';
+    } else if (err.name === 'NotReadableError') {
+      errorMsg = '📱 Kamera sedang digunakan aplikasi lain. Tutup aplikasi lain.';
+    } else if (err.name === 'OverconstrainedError') {
+      errorMsg = '📱 Kamera tidak mendukung resolusi yang diminta. Coba lagi...';
+    } else if (err.name === 'TypeError') {
+      errorMsg = '📱 getUserMedia tidak didukung di browser ini.';
+    }
+    
+    noCamMsg().textContent = errorMsg + ' (' + err.name + ')';
     setStatus('error');
     retryBtn().style.display = 'inline-flex';
     renderToggleButton(false);
@@ -207,8 +297,10 @@ function setMode(btn, mode, label) {
   facingMode  = mode === 'rear' ? 'environment' : 'user';
   document.querySelectorAll('.cb').forEach(b => b.classList.remove('act'));
   btn.classList.add('act');
-  document.getElementById('stM').textContent = label;
-  document.getElementById('infoMode').textContent = label;
+  const stM = document.getElementById('stM');
+  if (stM) stM.textContent = label;
+  const infoModeEl = document.getElementById('infoMode');
+  if (infoModeEl) infoModeEl.textContent = label;
   if (cameraOn) startCamera();
 }
 
