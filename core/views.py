@@ -165,15 +165,19 @@ def download_app_view(request):
     """Serve the APK directly if available, otherwise show a friendly unavailable message."""
     import os
 
-    apk_path = os.path.join(settings.BASE_DIR, 'static', 'downloads', 'tirescan.apk')
+    apk_paths = [
+        os.path.join(settings.BASE_DIR, 'static', 'downloads', 'tirescan.apk'),
+        os.path.join(settings.BASE_DIR, 'staticfiles', 'downloads', 'tirescan.apk'),
+    ]
 
-    if os.path.exists(apk_path):
-        response = FileResponse(
-            open(apk_path, 'rb'),
-            content_type='application/vnd.android.package-archive'
-        )
-        response['Content-Disposition'] = 'attachment; filename="tirescan.apk"'
-        return response
+    for apk_path in apk_paths:
+        if os.path.exists(apk_path):
+            response = FileResponse(
+                open(apk_path, 'rb'),
+                content_type='application/vnd.android.package-archive'
+            )
+            response['Content-Disposition'] = 'attachment; filename="tirescan.apk"'
+            return response
 
     return render(request, 'core/download_app_unavailable.html', {
         'LANGUAGE_CODE': get_language(),

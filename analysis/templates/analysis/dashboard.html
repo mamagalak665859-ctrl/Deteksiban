@@ -126,10 +126,12 @@
 
       <div class="app-download-block" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
         <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
-          <!-- Blok unduh dengan link dan tombol pasang di dalam area yang sama -->
+          <!-- Unduh atau pasang aplikasi di satu tempat -->
           <a
-            href="/download-app/"
+            id="installBtn"
+            href="{% url 'download_app' %}"
             class="ni"
+            onclick="installApp(event)"
             style="width:100%; justify-content:center; background:linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-weight:600; letter-spacing:.3px; text-decoration:none; display:flex; align-items:center; gap:8px; box-sizing:border-box; transition:opacity .2s;"
             onmouseover="this.style.opacity='.85'"
             onmouseout="this.style.opacity='1'"
@@ -139,19 +141,8 @@
               <polyline points="7 10 12 15 17 10"/>
               <line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
-            {% trans "Unduh Aplikasi" %}
+            <span id="installBtnText">{% trans "Unduh Aplikasi" %}</span>
           </a>
-
-          <button
-            id="installBtn"
-            class="ni"
-            style="display:none; width:100%; justify-content:center; background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:10px 14px; font-weight:600; letter-spacing:.3px; display:flex; align-items:center; gap:8px; box-sizing:border-box; transition:opacity .2s;"
-            onclick="installApp()"
-            onmouseover="this.style.opacity='.85'"
-            onmouseout="this.style.opacity='1'"
-          >
-            {% trans "Pasang Aplikasi" %}
-          </button>
         </div>
       </div>
 
