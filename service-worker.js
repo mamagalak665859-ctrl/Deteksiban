@@ -2,7 +2,7 @@
 // Strategy: cache-first for static assets, network-first for HTML with offline fallback.
 // Supports offline usage for cached pages.
 
-const CACHE_NAME = 'tirescan-v7';
+const CACHE_NAME = 'tirescan-v8';
 
 // Cache static assets and critical pages
 const STATIC_ASSETS = [
@@ -84,6 +84,25 @@ self.addEventListener('fetch', event => {
   if (url.pathname.startsWith('/admin/')) return;
   if (url.pathname.startsWith('/api/')) return;
   if (url.pathname.startsWith('/media/')) return;
+
+  // Static JS assets: network-first with cache fallback
+  if (url.pathname.startsWith('/static/analysis/js/')) {
+    console.log('SW: Handling JS asset request:', request.url);
+    event.respondWith(
+      fetch(request).then(res => {
+        if (res && res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(request, clone));
+          console.log('SW: Network response cached for:', request.url);
+        }
+        return res;
+      }).catch(() => {
+        console.log('SW: JS network failed, falling back to cache:', request.url);
+        return caches.match(request).then(cached => cached || getFallbackStaticAsset(request));
+      })
+    );
+    return;
+  }
 
   // Static assets: cache-first, update in background
   if (url.pathname.startsWith('/static/') || url.pathname === '/manifest.json') {
