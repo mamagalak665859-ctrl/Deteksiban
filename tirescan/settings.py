@@ -17,7 +17,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Build ALLOWED_HOSTS with support for Railway and Vercel domains
 _allowed_hosts = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if h.strip()]
-for host in ('*.vercel.app', '*.railway.app'):
+for host in ('*.vercel.app', '*.railway.app', '*.up.railway.app'):
     if host not in _allowed_hosts:
         _allowed_hosts.append(host)
 ALLOWED_HOSTS = _allowed_hosts
