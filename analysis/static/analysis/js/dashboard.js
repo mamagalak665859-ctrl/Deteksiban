@@ -914,10 +914,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const pltEmpty = document.getElementById('pltImgEmpty');
       if (pltEmpty) pltEmpty.style.display = 'flex';
 
-      // Also clear all image data when clearing result
-      if (typeof clearAllImageData === 'function') {
-        clearAllImageData();
-      }
+      // Avoid recursive loops: do not call clearAllImageData here because the original
+      // clearAllImageData implementation already calls clearResult.
     };
   }
 
