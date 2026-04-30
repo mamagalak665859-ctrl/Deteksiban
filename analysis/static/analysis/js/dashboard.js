@@ -1018,16 +1018,17 @@ const TXT = window.TXT || {
       if (choiceResult.outcome === 'accepted') {
         stateMgr.setSuccess(TXT.installed || 'Dipasang', 1600);
         showToast(TXT.appDownloading || 'Aplikasi akan diunduh...', 'success');
+        deferredPrompt = null;
+        updateInstallButtonText(TXT.downloadApp || 'Unduh Aplikasi');
       } else {
         stateMgr.setError(TXT.cancelled || 'Dibatalkan', 1400);
         showToast(TXT.installCancelled || 'Pemasangan dibatalkan', 'warn');
+        updateInstallButtonText(TXT.installLabel || 'Pasang Aplikasi');
       }
-      deferredPrompt = null;
-      updateInstallButtonText(TXT.downloadApp || 'Unduh Aplikasi');
     }).catch(err => {
       console.error('Install prompt error:', err);
       stateMgr.setError(TXT.failed || 'Gagal', 1600);
       showToast(TXT.installFailed || 'Gagal menampilkan prompt install', 'error');
-      updateInstallButtonText(TXT.downloadApp || 'Unduh Aplikasi');
+      updateInstallButtonText(TXT.installLabel || 'Pasang Aplikasi');
     });
   }
