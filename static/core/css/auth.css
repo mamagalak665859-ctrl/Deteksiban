@@ -1,4 +1,0 @@
-/* Reload legacy auth styles from the new dashboard stylesheet.
-   This file exists only to preserve existing {% static 'core/css/auth.css' %} references.
-*/
-@import url('/static/analysis/css/dashboard.css');
