@@ -6,8 +6,6 @@ const CACHE_NAME = 'tirescan-v5';
 
 // Cache static assets and critical pages
 const STATIC_ASSETS = [
-  '/static/core/css/base.css',
-  '/static/core/css/auth.css',
   '/static/analysis/css/dashboard.css',
   '/static/analysis/js/camera.js',
   '/static/analysis/js/dashboard.js',
