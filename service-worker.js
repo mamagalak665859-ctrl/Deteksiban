@@ -2,7 +2,7 @@
 // Strategy: cache-first for static assets, network-first for HTML with offline fallback.
 // Supports offline usage for cached pages.
 
-const CACHE_NAME = 'tirescan-v6';
+const CACHE_NAME = 'tirescan-v7';
 
 // Cache static assets and critical pages
 const STATIC_ASSETS = [
@@ -85,20 +85,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Critical pages: cache-first with network update
+  // Critical pages: network-first with cache fallback
   if (CRITICAL_PAGES.includes(url.pathname)) {
     event.respondWith(
-      caches.match(request).then(cached => {
-        const networkFetch = fetch(request).then(res => {
-          if (res && res.ok) {
-            const clone = res.clone();
-            caches.open(CACHE_NAME).then(c => c.put(request, clone));
-          }
-          return res;
-        });
-
-        return cached || networkFetch;
-      })
+      fetch(request).then(res => {
+        if (res && res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(request, clone));
+        }
+        return res;
+      }).catch(() => caches.match(request).then(cached => cached || caches.match('/offline/')))
     );
     return;
   }
@@ -106,8 +102,7 @@ self.addEventListener('fetch', event => {
   // Other HTML pages: network-first with offline fallback
   event.respondWith(
     fetch(request).catch(() => {
-      // Return offline page for navigation requests
-      if (request.headers.get('accept').includes('text/html')) {
+      if (request.headers.get('accept')?.includes('text/html')) {
         return caches.match('/offline/');
       }
     })
