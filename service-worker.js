@@ -2,7 +2,7 @@
 // Strategy: cache-first for static assets, network-first for HTML with offline fallback.
 // Supports offline usage for cached pages.
 
-const CACHE_NAME = 'tirescan-v5';
+const CACHE_NAME = 'tirescan-v6';
 
 // Cache static assets and critical pages
 const STATIC_ASSETS = [
