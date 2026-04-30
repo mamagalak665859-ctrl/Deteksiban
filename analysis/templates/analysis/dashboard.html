@@ -125,38 +125,34 @@
     <div class="sb-ft">
 
       <div class="app-download-block" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
-        <!-- Tombol Download Aplikasi (selalu tampil) -->
-        <a
-          href="/download-app/"
-          class="ni"
-          style="width:100%; justify-content:center; background:linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-weight:600; letter-spacing:.3px; text-decoration:none; display:flex; align-items:center; gap:8px; box-sizing:border-box; transition:opacity .2s;"
-          onmouseover="this.style.opacity='.85'"
-          onmouseout="this.style.opacity='1'"
-        >
-          <svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          {% trans "Unduh Aplikasi" %}
-        </a>
+        <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+          <!-- Blok unduh dengan link dan tombol pasang di dalam area yang sama -->
+          <a
+            href="/download-app/"
+            class="ni"
+            style="width:100%; justify-content:center; background:linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-weight:600; letter-spacing:.3px; text-decoration:none; display:flex; align-items:center; gap:8px; box-sizing:border-box; transition:opacity .2s;"
+            onmouseover="this.style.opacity='.85'"
+            onmouseout="this.style.opacity='1'"
+          >
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            {% trans "Unduh Aplikasi" %}
+          </a>
 
-        <!-- Tombol Pasang Aplikasi PWA (muncul otomatis jika browser mendukung) -->
-        <button
-          class="ni"
-          id="installBtn"
-          style="display:none; width:100%; justify-content:center; background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:10px 14px; font-weight:600; letter-spacing:.3px; display:flex; align-items:center; gap:8px; box-sizing:border-box; transition:opacity .2s;"
-          onclick="installApp()"
-          onmouseover="this.style.opacity='.85'"
-          onmouseout="this.style.opacity='1'"
-        >
-          <svg viewBox="0 0 24 24" style="width:16px;height:16px;margin-right:8px;stroke:#fff;fill:none;stroke-width:2">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          {% trans "Pasang Aplikasi" %}
-        </button>
+          <button
+            id="installBtn"
+            class="ni"
+            style="display:none; width:100%; justify-content:center; background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:10px 14px; font-weight:600; letter-spacing:.3px; display:flex; align-items:center; gap:8px; box-sizing:border-box; transition:opacity .2s;"
+            onclick="installApp()"
+            onmouseover="this.style.opacity='.85'"
+            onmouseout="this.style.opacity='1'"
+          >
+            {% trans "Pasang Aplikasi" %}
+          </button>
+        </div>
       </div>
 
       <div class="llbl">{% trans "Bahasa" %}</div>
