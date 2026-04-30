@@ -1,8 +1,13 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env only in development (optional)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # python-dotenv not installed (normal in production)
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
