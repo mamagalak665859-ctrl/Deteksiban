@@ -114,12 +114,14 @@ async function startCamera() {
   try {
     if (stream) stopCamera();
 
+    const videoConstraints = {
+      width:  { ideal: 1280 },
+      height: { ideal: 720 },
+      facingMode: { ideal: facingMode },
+    };
+
     stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode,
-        width:  { ideal: 1280 },
-        height: { ideal: 720 },
-      },
+      video: videoConstraints,
       audio: false,
     });
 
