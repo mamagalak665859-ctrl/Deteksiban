@@ -23,6 +23,14 @@ const CRITICAL_PAGES = [
   // Note: /detail/ requires ID parameter, cached on-demand
 ];
 
+// ── Helper: fallback for old hashed JS asset requests ──────────────
+function getFallbackStaticAsset(request) {
+  const hashedJsMatch = request.url.match(/\/static\/analysis\/js\/(camera|dashboard)\.[a-f0-9]+\.js$/);
+  if (!hashedJsMatch) return Promise.resolve(null);
+  const fallbackUrl = `/static/analysis/js/${hashedJsMatch[1]}.js`;
+  return caches.match(fallbackUrl).then(cached => cached || fetch(fallbackUrl).catch(() => null));
+}
+
 // ── Install: pre-cache static assets and critical pages ────────
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -77,9 +85,10 @@ self.addEventListener('fetch', event => {
           if (res && res.ok) {
             const clone = res.clone();
             caches.open(CACHE_NAME).then(c => c.put(request, clone));
+            return res;
           }
-          return res;
-        });
+          return getFallbackStaticAsset(request).then(fallback => fallback || res);
+        }).catch(() => getFallbackStaticAsset(request));
       })
     );
     return;
