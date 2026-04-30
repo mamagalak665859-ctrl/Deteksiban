@@ -16,10 +16,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-&4ua(ifaqx7_r^ya*!93$
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Build ALLOWED_HOSTS with support for all Vercel preview domains
-_allowed_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,*.vercel.app').split(',')
-# Add wildcard for Vercel if vercel.app is in the list but wildcard isn't
+_allowed_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,*.vercel.app,*.railway.app').split(',')
+# Add wildcard for Vercel/Railway if any matching hostname is present but wildcard isn't
 if any('vercel.app' in h for h in _allowed_hosts) and '*.vercel.app' not in _allowed_hosts:
     _allowed_hosts.append('*.vercel.app')
+if any('railway.app' in h for h in _allowed_hosts) and '*.railway.app' not in _allowed_hosts:
+    _allowed_hosts.append('*.railway.app')
 ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts]
 
 INSTALLED_APPS = [
