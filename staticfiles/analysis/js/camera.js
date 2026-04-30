@@ -4,7 +4,7 @@
 
 let stream        = null;
 let cameraOn      = false;
-let facingMode    = 'environment';   // 'user' | 'environment'
+let facingMode    = 'user';          // 'user' | 'environment'
 let captureCount  = 0;
 let currentB64 = window._currentB64 = null;
 window._currentB64 = null; // shared with dashboard.js
