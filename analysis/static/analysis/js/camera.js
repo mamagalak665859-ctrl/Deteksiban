@@ -301,7 +301,8 @@ function setMode(btn, mode, label) {
   if (stM) stM.textContent = label;
   const infoModeEl = document.getElementById('infoMode');
   if (infoModeEl) infoModeEl.textContent = label;
-  if (cameraOn) startCamera();
+  const activeStream = getActiveStream();
+  if (cameraOn || isStreamActive(activeStream)) startCamera();
 }
 
 // ── Retry camera ─────────────────────────────────────────────

@@ -1004,8 +1004,11 @@ const TXT = window.TXT || {
 
   function installApp(event) {
     if (!installBtn) return;
-    if (!deferredPrompt) return;
     if (event && event.preventDefault) event.preventDefault();
+    if (!deferredPrompt) {
+      window.location.href = '/download-app/';
+      return;
+    }
 
     const stateMgr = new ButtonStateManager(installBtn);
     stateMgr.setLoading(TXT.loading || 'Menyiapkan...');
