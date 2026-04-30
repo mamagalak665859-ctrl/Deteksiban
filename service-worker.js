@@ -28,7 +28,24 @@ function getFallbackStaticAsset(request) {
   const hashedJsMatch = request.url.match(/\/static\/analysis\/js\/(camera|dashboard)\.[a-f0-9]+\.js$/);
   if (!hashedJsMatch) return Promise.resolve(null);
   const fallbackUrl = `/static/analysis/js/${hashedJsMatch[1]}.js`;
-  return caches.match(fallbackUrl).then(cached => cached || fetch(fallbackUrl).catch(() => null));
+  console.log('SW: Fallback triggered for', request.url, '-> trying', fallbackUrl);
+  return caches.match(fallbackUrl).then(cached => {
+    if (cached) {
+      console.log('SW: Serving fallback from cache:', fallbackUrl);
+      return cached;
+    }
+    console.log('SW: Fetching fallback from network:', fallbackUrl);
+    return fetch(fallbackUrl).then(res => {
+      if (res.ok) {
+        console.log('SW: Caching fallback response:', fallbackUrl);
+        caches.open(CACHE_NAME).then(c => c.put(fallbackUrl, res.clone()));
+      }
+      return res;
+    }).catch(err => {
+      console.error('SW: Failed to fetch fallback:', fallbackUrl, err);
+      return null;
+    });
+  });
 }
 
 // ── Install: pre-cache static assets and critical pages ────────
@@ -70,9 +87,11 @@ self.addEventListener('fetch', event => {
 
   // Static assets: cache-first, update in background
   if (url.pathname.startsWith('/static/') || url.pathname === '/manifest.json') {
+    console.log('SW: Handling static asset request:', request.url);
     event.respondWith(
       caches.match(request).then(cached => {
         if (cached) {
+          console.log('SW: Serving from cache:', request.url);
           // Refresh cache in background
           fetch(request).then(res => {
             if (res && res.ok) {
@@ -81,14 +100,20 @@ self.addEventListener('fetch', event => {
           }).catch(() => {});
           return cached;
         }
+        console.log('SW: Cache miss, fetching from network:', request.url);
         return fetch(request).then(res => {
           if (res && res.ok) {
             const clone = res.clone();
             caches.open(CACHE_NAME).then(c => c.put(request, clone));
+            console.log('SW: Cached response for:', request.url);
             return res;
           }
+          console.log('SW: Network response not ok, trying fallback for:', request.url);
           return getFallbackStaticAsset(request).then(fallback => fallback || res);
-        }).catch(() => getFallbackStaticAsset(request));
+        }).catch(() => {
+          console.log('SW: Network failed, trying fallback for:', request.url);
+          return getFallbackStaticAsset(request);
+        });
       })
     );
     return;
